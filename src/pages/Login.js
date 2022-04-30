@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
+import {useNavigate } from "react-router-dom"
 
 import logo_small from "../assets/logo_small.png"
 
@@ -41,6 +42,7 @@ const StyledButton = styled(Button)({
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleChangeEmail = (e) => {
         setEmail(e.target.value)
@@ -57,6 +59,8 @@ const Login = () => {
 
     const login = () => {
         //sending request to server
+        navigate("/home")
+
     }
     
     return (
@@ -70,7 +74,7 @@ const Login = () => {
                     <Grid container justifyContent="space-between">
                         <Grid item>
                         {"Don't have an account? "}
-                            <Link href="#" sx={{fontWeight: 900, fontSize: 18, textDecoration: "none"}}>
+                            <Link href="/sign_up" sx={{fontWeight: 900, fontSize: 18, textDecoration: "none"}}>
                             { "Sign Up"}
                             </Link>
                         </Grid>

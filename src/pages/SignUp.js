@@ -115,7 +115,7 @@ const SignUp = () => {
                     <Grid container justifyContent="space-between">
                         <Grid item>
                         {"Already have an account? "}
-                            <Link href="#" sx={{fontWeight: 900, fontSize: 18, textDecoration: "none"}}>
+                            <Link href="/" sx={{fontWeight: 900, fontSize: 18, textDecoration: "none"}}>
                             { "Sign In"}
                             </Link>
                         </Grid>

@@ -10,6 +10,8 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@emotion/react";
 import theme from "./theme";
+import { MyRoutes } from "./routes/Routes";
+import { useRoutes, Route, Routes } from "react-router-dom";
 
 const store = configureStore({
   reducer: {},
@@ -19,7 +21,7 @@ const app = (
   <Provider store={store}>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
-        <Profile />
+        <App />
       </ThemeProvider>
     </BrowserRouter>
   </Provider>

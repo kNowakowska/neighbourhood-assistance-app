@@ -16,6 +16,8 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Tooltip from "@mui/material/Tooltip";
+import Rating from "@mui/material/Rating";
+import withNavBar from "../hoc/WithNavBar"
 
 import Comment from "../components/Comment";
 import CommentInput from "../components/CommentInput";
@@ -65,6 +67,7 @@ const Profile = () => {
     created: new Date(),
     phone_number: "511234098",
     last_active: new Date(),
+    avg_rate: 3.6,
     comments: [
       {
         comment:
@@ -88,10 +91,11 @@ const Profile = () => {
         rate: 5.0,
         id: 2,
       },
+      
     ],
   });
 
-  const handleChangeName = e => {
+  const handleChangeName = (e) => {
     setUser({ ...user, name: e.target.value });
   };
 
@@ -99,11 +103,11 @@ const Profile = () => {
 
   const handleChangePhoneNumber = () => {};
 
-  const changeMode = parameter => {
+  const changeMode = (parameter) => {
     setEditMode({ ...editMode, [parameter]: !editMode[parameter] });
   };
 
-  const saveComment = comment => {
+  const saveComment = (comment) => {
     setAddCommentMode(!addCommentMode);
   };
 
@@ -125,6 +129,7 @@ const Profile = () => {
             sx={{ fontStyle: "italic", mt: 1, width: "75%" }}
             align="center"
           >{`Last seen ${user.last_active.toDateString()}`}</Typography>
+          <Rating name="read-only" value={user.avg_rate} readOnly precision={0.5} sx={{mt:3, ml:4}}/>
         </Grid>
         <Grid item container xs={9}>
           <Box sx={{ display: "flex", alignItems: "center", width: "50%" }}>
@@ -152,8 +157,8 @@ const Profile = () => {
               error={false}
             />
             <StyledEditIcon onClick={() => changeMode("lastName")}>
-              {" "}
-              <ModeEditIcon />{" "}
+              
+              <ModeEditIcon />
             </StyledEditIcon>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", width: "100%", mb: 3 }}>
@@ -177,13 +182,12 @@ const Profile = () => {
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mb: 2 }}>
               <Tooltip title="Add comment" placement="right">
                 <IconButton onClick={() => setAddCommentMode(!addCommentMode)}>
-                  {" "}
                   <AddCircleIcon />
                 </IconButton>
               </Tooltip>
             </Box>
           )}
-          {user.comments.map(comment => (
+          {user.comments.map((comment) => (
             <Comment key={comment.id} {...comment} />
           ))}
         </Grid>
@@ -192,4 +196,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default withNavBar(Profile);
