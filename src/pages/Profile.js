@@ -17,6 +17,7 @@ import Typography from "@mui/material/Typography";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Tooltip from "@mui/material/Tooltip";
 import Rating from "@mui/material/Rating";
+import Divider from "@mui/material/Divider";
 import withNavBar from "../hoc/WithNavBar"
 
 import Comment from "../components/Comment";
@@ -176,6 +177,9 @@ const Profile = () => {
               <ModeEditIcon />
             </StyledEditIcon>
           </Box>
+          <Divider sx={{width:'95%'}} />
+
+          <Typography variant="caption" sx={{fontSize: 16, mt: 1}} align="left">COMMENTS</Typography>
           {addCommentMode ? (
             <CommentInput onSave={saveComment} />
           ) : (

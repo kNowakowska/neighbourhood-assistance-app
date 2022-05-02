@@ -29,7 +29,7 @@ const themeOptions = {
   components:{
     MuiCssBaseline:{
       styleOverrides: `@font-face { font-family: 'Mukta'; }`
-    }
+    },
   }
 };
 
