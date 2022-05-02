@@ -1,31 +1,49 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
+import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
-import { Typography, Grid, CardContent, CardMedia } from "@mui/material";
-import {useNavigate } from "react-router-dom"
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+
 import no_photo from "../assets/no-photo.png";
-import {theme } from "../theme"
+
+const StyledCard = styled(Card)({
+  width: 275,
+  display: "inline-block",
+  "&:hover": { cursor: "pointer" },
+});
+
+const StyledCardContent = styled(CardContent)({
+  backgroundColor: (theme) => theme.palette.background.paper,
+});
+
+const StyledTypography = styled(Typography)({
+  width: "50%",
+});
 
 const PostCard = ({ title, created, city, price, currency, photo, id }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const selectPost = () => {
-        navigate(`/posts/${id}`)
-    }
+  const selectPost = () => {
+    navigate(`/posts/${id}`);
+  };
+
   return (
-    //   , 
-    <Card sx={{ width: 275,display: "inline-block", m: 2, "&:hover": {cursor: "pointer"}}} onClick={selectPost}>
+    <StyledCard onClick={selectPost} sx={{m:2}}>
       <CardMedia component="img" height="140" image={no_photo} alt="post-photo" />
-      
-      <CardContent sx={{backgroundColor: theme => theme.palette.background.paper}}>
+      <StyledCardContent>
         <Typography gutterBottom variant="h5" component="div">
           {title}
         </Typography>
         <Grid container>
-        <Typography variant="body2" sx={{ width: "50%" }}>{`${created.toDateString()}, ${city}`}</Typography>
-        <Typography variant="body2" sx={{ width: "50%" }}>{`${price} ${currency}`}</Typography>
+          <StyledTypography variant="body2">{`${created.toDateString()}, ${city}`}</StyledTypography>
+          <StyledTypography variant="body2">{`${price} ${currency}`}</StyledTypography>
         </Grid>
-      </CardContent>
-    </Card>
+      </StyledCardContent>
+    </StyledCard>
   );
 };
 

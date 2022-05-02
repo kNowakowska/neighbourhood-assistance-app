@@ -1,18 +1,35 @@
 import React from "react";
+
+import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Rating from "@mui/material/Rating";
 import Box from "@mui/material/Box";
 
+const StyledCard = styled(Card)({
+  width: "95%",
+});
+
+const StyledBox = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+});
+
+const StyledComment = styled(Typography)({
+  width: "80%",
+  fontStyle: "italic",
+});
+
 const Comment = ({ comment, created, author, rate }) => {
   return (
-    <Card sx={{ mb: 2, mt: 2, width: "95%" }}>
-      <Box sx={{ display: "flex", alignItems: "center", padding: 2, justifyContent: "space-between" }}>
+    <StyledCard sx={{ mb: 2, mt: 2 }}>
+      <StyledBox sx={{ p: 2 }}>
         <Typography>{`${author.name} ${author.last_name} - ${created.toDateString()}`}</Typography>
         <Rating name="read-only" value={rate} readOnly precision={0.5} />
-      </Box>
-      <Typography sx={{ width: "80%", mr: "auto", ml: "auto", mt: 2, mb: 2, fontStyle: "italic" }}>{comment}</Typography>
-    </Card>
+      </StyledBox>
+      <StyledComment sx={{ mr: "auto", ml: "auto", mt: 2, mb: 2 }}>{comment}</StyledComment>
+    </StyledCard>
   );
 };
 

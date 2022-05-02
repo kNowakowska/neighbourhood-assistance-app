@@ -1,19 +1,13 @@
-import './App.css';
-import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from './AppBar';
-import {MyRoutes} from "./routes/Routes"
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
-import Profile from "./pages/Profile";
-import Home from "./pages/Home"
+import "./App.css";
+import CssBaseline from "@mui/material/CssBaseline";
 
+import { MyRoutes as Routes } from "./routes/Routes";
 
 function App() {
   return (
     <div className="App">
-     <CssBaseline />
-      {/* <AppBar />  */}
-     <MyRoutes/>
+      <CssBaseline />
+      <Routes />
     </div>
   );
 }

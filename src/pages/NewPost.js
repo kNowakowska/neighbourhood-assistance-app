@@ -1,56 +1,24 @@
 import React, { useState } from "react";
+import { useConfirm } from "material-ui-confirm";
+
+import { styled } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import CssBaseline from "@mui/material/CssBaseline";
-import Avatar from "@mui/material/Avatar";
-import {
-  Typography,
-  Rating,
-  Paper,
-  Box,
-  TextField,
-  IconButton,
-  Toolbar,
-  Tooltip,
-  Button,
-  Icon,
-  Select,
-  Autocomplete,
-  MenuItem,
-  Input,
-  InputAdornment,
-} from "@mui/material";
-import FlagIcon from "@mui/icons-material/Flag";
-import DeleteIcon from "@mui/icons-material/Delete";
-import no_photo from "../assets/no-photo.png";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Icon from "@mui/material/Icon";
+import Autocomplete from "@mui/material/Autocomplete";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 
 import withNavBar from "../hoc/WithNavBar";
-import { useConfirm } from "material-ui-confirm";
-import { useNavigate } from "react-router-dom";
 import { currencies } from "../utils";
 
-const initialPost = {
-  id: 1,
-  title: "Sprzedam samochód",
-  craeted: new Date(),
-  city: "Kraków",
-  price: 100,
-  currency: "PLN",
-  description:
-    "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptas iste, provident quis at magnam harum commodi, quas atque, dicta possimus cum. Placeat veritatis at odio aspernatur praesentium atque minima! Quisquam?",
-  photo: null,
-  views: 70,
-  author: {
-    name: "Jane",
-    last_name: "Smith",
-    id: 1,
-    phone_number: "123456123",
-    photo: null,
-    last_active: new Date(),
-    created: new Date(),
-    avg_rate: 4.5,
-  },
-};
+const StyledContainer = styled(Grid)({
+  marginTop: "100px",
+});
 
 const NewPost = () => {
   const confirm = useConfirm();
@@ -59,6 +27,22 @@ const NewPost = () => {
   const [price, setPrice] = useState(0);
   const [currency, setCurrency] = useState(currencies[0]);
   const [photo, setPhoto] = useState(null);
+
+  const handleChangeTitle = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const handleChangeDescription = (e) => {
+    setDescription(e.target.value);
+  };
+
+  const handleChangePrice = (e) => {
+    setPrice(e.target.value);
+  };
+
+  const handleChangeCurrency = (e, newValue) => {
+    setCurrency(newValue);
+  };
 
   const savePost = () => {
     confirm({ title: "Create post", description: "Are you sure you want to add new post?", confirmationText: "Create" })
@@ -78,17 +62,17 @@ const NewPost = () => {
   };
 
   const clearFields = () => {
-    setTitle("")
-    setDescription("")
-    setPrice(0)
-    setCurrency(currencies[0])
-    setPhoto(null)
-  }
+    setTitle("");
+    setDescription("");
+    setPrice(0);
+    setCurrency(currencies[0]);
+    setPhoto(null);
+  };
 
   return (
     <Container component="main">
       <CssBaseline />
-      <Grid container sx={{ marginTop: "100px" }}>
+      <StyledContainer container>
         <Paper>
           <Grid container sx={{ p: 3 }} justifyContent="center" alignItems="center">
             <Typography variant="h6" sx={{ mb: 5 }}>
@@ -97,7 +81,7 @@ const NewPost = () => {
             <TextField
               label="Title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={handleChangeTitle}
               variant="outlined"
               required
               fullWidth
@@ -106,7 +90,7 @@ const NewPost = () => {
             <TextField
               label="Description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={handleChangeDescription}
               variant="outlined"
               sx={{ mb: 4 }}
               required
@@ -117,7 +101,7 @@ const NewPost = () => {
             <TextField
               label="Price"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={handleChangePrice}
               type="number"
               variant="outlined"
               sx={{ width: "45%", mb: 4, mr: 1 }}
@@ -126,7 +110,7 @@ const NewPost = () => {
             <Autocomplete
               options={currencies}
               value={currency}
-              onChange={(e, newValue) => setCurrency(newValue)}
+              onChange={handleChangeCurrency}
               renderInput={(params) => <TextField {...params} label="Currency" />}
               getOptionLabel={(option) => `${option.symbol} ${option.curr}`}
               variant="outlined"
@@ -143,7 +127,7 @@ const NewPost = () => {
                 startIcon={<Icon>add_a_photo</Icon>}
               >
                 {photo ? photo.name : "Upload photo"}
-                <input type="file" hidden onChange={uploadPhoto} accept="image/jpeg,image/png"/>
+                <input type="file" hidden onChange={uploadPhoto} accept="image/jpeg,image/png" />
               </Button>
               <Box>
                 <Button size="large" variant="contained" sx={{ mr: 2 }} onClick={clearFields}>
@@ -156,7 +140,7 @@ const NewPost = () => {
             </Grid>
           </Grid>
         </Paper>
-      </Grid>
+      </StyledContainer>
     </Container>
   );
 };

@@ -1,13 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import CssBaseline from "@mui/material/CssBaseline";
-import CardContent from "@mui/material/CardContent";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import PostCard from "../components/PostCard"
+import React, { useEffect, useState } from "react";
 
+import { styled } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
+
+import PostCard from "../components/PostCard";
 import withNavBar from "../hoc/WithNavBar";
-import { TextField, Button, InputAdornment, Icon } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
 
 const initialPosts = [
   {
@@ -70,7 +72,7 @@ const initialPosts = [
   {
     id: 4,
     title: "Układam płytki",
-    created: new Date(2021,11,5),
+    created: new Date(2021, 11, 5),
     city: "Kielce",
     price: 100,
     currency: "PLN",
@@ -145,49 +147,76 @@ const initialPosts = [
   },
 ];
 
+const StyledContainer = styled(Grid)({
+  marginTop: "100px",
+  justifyContent: "center",
+});
+
+const StyledButton = styled(Button)({
+  width: 250,
+  fontSize: 20,
+});
+
+const StyledTextField = styled(TextField)({
+  width: 250,
+});
+
 function Home() {
-  const [ search, setSearch] = useState("")
-  const [ posts, setPosts] = useState(initialPosts);
-  const [onlyMyPosts, setOnlyMyPosts] = useState(false)
+  const [search, setSearch] = useState("");
+  const [posts, setPosts] = useState(initialPosts);
+  const [myPostsMode, setMyPostsMode] = useState(false);
 
   const showMyPosts = (userId) => {
-    if(!onlyMyPosts)
-      setPosts(initialPosts.filter(post => post.author.id === userId))
-    else
-      setPosts(initialPosts)
-    setOnlyMyPosts(prevState => !prevState)
+    if (!myPostsMode) setPosts(initialPosts.filter((post) => post.author.id === userId));
+    else setPosts(initialPosts);
+    setMyPostsMode((prevState) => !prevState);
+  };
 
-  }
-
-  const handleSearch = e => {
-    setSearch(e.target.value)
-  }
+  const handleSearch = (e) => {
+    setSearch(e.target.value.toLowerCase());
+  };
 
   useEffect(() => {
-    setPosts(initialPosts.filter(post => post.title.includes(search) || post.city.includes(search) || post.created.toDateString().includes(search) || post.price.toString().includes(search) || post.currency.includes(search)))
+    setPosts(
+      initialPosts.filter(
+        (post) =>
+          post.title.toLowerCase().includes(search) ||
+          post.city.toLowerCase().includes(search) ||
+          post.created.toLowerCase().toDateString().includes(search) ||
+          post.price.toString().includes(search) ||
+          post.currency.toLowerCase().includes(search)
+      )
+    );
+  }, [search]);
 
-  }, [search])
   return (
-    <main style={{maxWidth: "80%", marginLeft: "auto", marginRight: "auto"}}>
+    <main style={{ maxWidth: "80%", marginLeft: "auto", marginRight: "auto" }}>
       <CssBaseline />
-      <Grid container sx={{ marginTop: "100px", justifyContent: "center"}}>   
-      <Grid item container justifyContent="space-between" mb={4}>
-      <Button variant="contained" size="large" onClick={() => showMyPosts(1)} color="secondary"  sx={{width: 250, fontSize: 20, ml:3}}>{onlyMyPosts ? "All posts" : "My posts"}</Button>
-      <TextField 
-      label="Search"
-        value={search}
-        type="search"
-        variant="outlined"
-        InputProps={{
-          endAdornment:<InputAdornment position="end"><SearchIcon/></InputAdornment>
-        }}
-        onChange={handleSearch}
-        sx={{mr: 3, width: 250}}
-      /> 
-
-      </Grid> 
-      {posts.map(post => <PostCard key={post.id} {...post} />)}
-      </Grid>
+      <StyledContainer container>
+        <Grid item container justifyContent="space-between" mb={4}>
+          <StyledButton variant="contained" size="large" onClick={() => showMyPosts(1)} color="secondary" sx={{ ml: 3 }}>
+            {myPostsMode ? "All posts" : "My posts"}
+          </StyledButton>
+          <StyledTextField
+            label="Search"
+            value={search}
+            type="search"
+            variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            onChange={handleSearch}
+            sx={{ mr: 3 }}
+          />
+        </Grid>
+        {posts.map((post) => (
+          <PostCard key={post.id} {...post} />
+        ))}
+      </StyledContainer>
     </main>
   );
 }

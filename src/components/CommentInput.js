@@ -1,24 +1,42 @@
 import React, { useState } from "react";
+
+import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
-import Typography from "@mui/material/Typography";
 import Rating from "@mui/material/Rating";
-import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+
+const StyledCard = styled(Card)({
+  width: "95%",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+});
+
+const StyledTextField = styled(TextField)({
+  width: "70%",
+});
 
 const CommentInput = ({ onSave }) => {
   const [rate, setRate] = useState(5);
   const [comment, setComment] = useState("");
 
-  return (
-    <Card sx={{ mb: 2, mt: 2, p: 3, width: "95%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <TextField value={comment} onChange={(e) => setComment(e.target.value)} multiline sx={{ width: "70%" }} />
+  const handleChangeComment = (e) => {
+    setComment(e.target.value);
+  };
 
-      <Rating name="read-only" value={rate} onChange={(_e, newValue) => setRate(newValue)} precision={0.5} />
+  const handleChangeRate = (_e, newValue) => {
+    setRate(newValue);
+  };
+
+  return (
+    <StyledCard sx={{ mb: 2, mt: 2, p: 3 }}>
+      <StyledTextField value={comment} onChange={handleChangeComment} multiline />
+      <Rating name="read-only" value={rate} onChange={handleChangeRate} precision={0.5} />
       <Button variant="contained" color="secondary" disabled={!comment} onClick={onSave}>
         Save
       </Button>
-    </Card>
+    </StyledCard>
   );
 };
 
