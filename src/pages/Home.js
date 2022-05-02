@@ -13,7 +13,7 @@ const initialPosts = [
   {
     id: 1,
     title: "Układam płytki",
-    date: new Date(),
+    created: new Date(),
     city: "Kielce",
     price: 100,
     currency: "PLN",
@@ -32,7 +32,7 @@ const initialPosts = [
   {
     id: 2,
     title: "Układam płytki",
-    date: new Date(),
+    created: new Date(),
     city: "Kielce",
     price: 100,
     currency: "PLN",
@@ -51,7 +51,7 @@ const initialPosts = [
   {
     id: 3,
     title: "Układam płytki",
-    date: new Date(),
+    created: new Date(),
     city: "Kielce",
     price: 100,
     currency: "PLN",
@@ -70,7 +70,7 @@ const initialPosts = [
   {
     id: 4,
     title: "Układam płytki",
-    date: new Date(2021,11,5),
+    created: new Date(2021,11,5),
     city: "Kielce",
     price: 100,
     currency: "PLN",
@@ -89,7 +89,7 @@ const initialPosts = [
   {
     id: 5,
     title: "Układam panele",
-    date: new Date(),
+    created: new Date(),
     city: "Kielce",
     price: 100,
     currency: "PLN",
@@ -108,7 +108,7 @@ const initialPosts = [
   {
     id: 6,
     title: "Układam płytki",
-    date: new Date(),
+    created: new Date(),
     city: "Kielce",
     price: 200,
     currency: "EUR",
@@ -127,7 +127,7 @@ const initialPosts = [
   {
     id: 7,
     title: "Układam płytki",
-    date: new Date(),
+    created: new Date(),
     city: "Warszawa",
     price: 100,
     currency: "PLN",
@@ -164,7 +164,7 @@ function Home() {
   }
 
   useEffect(() => {
-    setPosts(initialPosts.filter(post => post.title.includes(search) || post.city.includes(search) || post.date.toDateString().includes(search) || post.price.toString().includes(search) || post.currency.includes(search)))
+    setPosts(initialPosts.filter(post => post.title.includes(search) || post.city.includes(search) || post.created.toDateString().includes(search) || post.price.toString().includes(search) || post.currency.includes(search)))
 
   }, [search])
   return (

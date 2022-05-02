@@ -7,6 +7,7 @@ import NotFound from "../pages/NotFound"
 import Post from "../pages/Post"
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
+import NewPost from "../pages/NewPost"
 
 import { useRoutes, Route, Routes } from "react-router-dom";
 
@@ -16,6 +17,7 @@ export const pages = [
     sidebarName: "Home",
     icon: "home"
   },
+  { path: "/create_post", sidebarName: "New post", icon: "post_add" },
   { path: "/profile/1", sidebarName: "Profile", icon: "person" },
 ];
 
@@ -29,6 +31,7 @@ export function MyRoutes() {
        <Route path="/home" element={<Home />} />
        <Route path="/posts/:id" element={<Post />} />
        <Route path="/profile/:id" element={<Profile/>} />
+       <Route path="/create_post" element={<NewPost/>}/>
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

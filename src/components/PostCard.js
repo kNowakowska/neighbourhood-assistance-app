@@ -5,7 +5,7 @@ import {useNavigate } from "react-router-dom"
 import no_photo from "../assets/no-photo.png";
 import {theme } from "../theme"
 
-const PostCard = ({ title, date, city, price, currency, photo, id }) => {
+const PostCard = ({ title, created, city, price, currency, photo, id }) => {
     const navigate = useNavigate();
 
     const selectPost = () => {
@@ -21,7 +21,7 @@ const PostCard = ({ title, date, city, price, currency, photo, id }) => {
           {title}
         </Typography>
         <Grid container>
-        <Typography variant="body2" sx={{ width: "50%" }}>{`${date.toDateString()}, ${city}`}</Typography>
+        <Typography variant="body2" sx={{ width: "50%" }}>{`${created.toDateString()}, ${city}`}</Typography>
         <Typography variant="body2" sx={{ width: "50%" }}>{`${price} ${currency}`}</Typography>
         </Grid>
       </CardContent>

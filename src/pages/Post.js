@@ -16,7 +16,7 @@ import {useNavigate } from "react-router-dom"
 const initialPost = {
   id: 1,
   title: "Sprzedam samochód",
-  date: new Date(),
+  created: new Date(),
   city: "Kraków",
   price: 100,
   currency: "PLN",
@@ -46,7 +46,7 @@ const Post = () => {
   const reportPost = () => {};
 
   const deletePost = () => {
-    confirm({ title: "Post deletion", description: "This action in permanent!", confirmationText: "Delete" })
+    confirm({ title: "Delete post", description: "This action in permanent!", confirmationText: "Delete" })
       .then(() => {
         console.log("deleted");
       })
@@ -91,7 +91,7 @@ const Post = () => {
         <Grid item container xs={9}>
           <Paper >
           <Grid container sx={{p: 3}}>
-            <Typography sx={{ width: "50%" }}>{`${post.date.toDateString()}, ${post.city}`}</Typography>
+            <Typography sx={{ width: "50%" }}>{`${post.created.toDateString()}, ${post.city}`}</Typography>
             <Typography sx={{ width: "50%" }}>{`${post.price} ${post.currency}`}</Typography>
             <Typography variant="h3" sx={{width: "100%", m:2}}>{post.title}</Typography>
             <Box
