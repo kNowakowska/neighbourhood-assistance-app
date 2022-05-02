@@ -4,6 +4,7 @@ import SignUp from "../pages/SignUp";
 import Profile from "../pages/Profile";
 import Home from "../pages/Home"
 import NotFound from "../pages/NotFound"
+import Post from "../pages/Post"
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 
@@ -15,7 +16,7 @@ export const pages = [
     sidebarName: "Home",
     icon: "home"
   },
-  { path: "/profile", sidebarName: "Profile", icon: "person" },
+  { path: "/profile/1", sidebarName: "Profile", icon: "person" },
 ];
 
 
@@ -26,7 +27,8 @@ export function MyRoutes() {
        <Route path="/" element={<Login />} />
        <Route path="/sign_up" element={<SignUp/>} />
        <Route path="/home" element={<Home />} />
-       <Route path="/profile" element={<Profile/>} />
+       <Route path="/posts/:id" element={<Post />} />
+       <Route path="/profile/:id" element={<Profile/>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

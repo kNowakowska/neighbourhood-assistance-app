@@ -12,6 +12,8 @@ import { ThemeProvider } from "@emotion/react";
 import theme from "./theme";
 import { MyRoutes } from "./routes/Routes";
 import { useRoutes, Route, Routes } from "react-router-dom";
+import { ConfirmProvider } from 'material-ui-confirm';
+
 
 const store = configureStore({
   reducer: {},
@@ -20,9 +22,11 @@ const store = configureStore({
 const app = (
   <Provider store={store}>
     <BrowserRouter>
+    <ConfirmProvider>
       <ThemeProvider theme={theme}>
         <App />
       </ThemeProvider>
+      </ConfirmProvider>
     </BrowserRouter>
   </Provider>
 );

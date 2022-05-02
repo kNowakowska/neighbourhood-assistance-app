@@ -13,7 +13,7 @@ const PostCard = ({ title, date, city, price, currency, photo, id }) => {
     }
   return (
     //   , 
-    <Card sx={{ width: 275,display: "inline-block", m: 2}} onClick={selectPost}>
+    <Card sx={{ width: 275,display: "inline-block", m: 2, "&:hover": {cursor: "pointer"}}} onClick={selectPost}>
       <CardMedia component="img" height="140" image={no_photo} alt="post-photo" />
       
       <CardContent sx={{backgroundColor: theme => theme.palette.background.paper}}>
