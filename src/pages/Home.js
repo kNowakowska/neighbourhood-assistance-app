@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -23,6 +24,7 @@ const initialPosts = [
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
     photo: null,
     views: 50,
+    categories: [3],
     author: {
       name: "John",
       last_name: "Smith",
@@ -42,6 +44,7 @@ const initialPosts = [
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
     photo: null,
     views: 50,
+    categories: [1, 2, 3],
     author: {
       name: "John",
       last_name: "Smith",
@@ -61,6 +64,7 @@ const initialPosts = [
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
     photo: null,
     views: 50,
+    categories: [2],
     author: {
       name: "John",
       last_name: "Smith",
@@ -80,6 +84,7 @@ const initialPosts = [
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
     photo: null,
     views: 50,
+    categories: [1],
     author: {
       name: "John",
       last_name: "Smith",
@@ -93,12 +98,13 @@ const initialPosts = [
     title: "Układam panele",
     created: new Date(),
     city: "Kielce",
-    price: 100,
+    price: 200,
     currency: "PLN",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
     photo: null,
     views: 50,
+    categories: [3],
     author: {
       name: "John",
       last_name: "Smith",
@@ -111,13 +117,14 @@ const initialPosts = [
     id: 6,
     title: "Układam płytki",
     created: new Date(),
-    city: "Kielce",
+    city: "Warszawa",
     price: 200,
     currency: "EUR",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
     photo: null,
     views: 50,
+    categories: [2, 3],
     author: {
       name: "John",
       last_name: "Smith",
@@ -137,6 +144,7 @@ const initialPosts = [
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
     photo: null,
     views: 50,
+    categories: [1, 2],
     author: {
       name: "John",
       last_name: "Smith",
@@ -165,11 +173,31 @@ function Home() {
   const [search, setSearch] = useState("");
   const [posts, setPosts] = useState(initialPosts);
   const [myPostsMode, setMyPostsMode] = useState(false);
+  const userId = 1;
 
-  const showMyPosts = (userId) => {
-    if (!myPostsMode) setPosts(initialPosts.filter((post) => post.author.id === userId));
-    else setPosts(initialPosts);
+  let params = useParams();
+
+  useEffect(() => {
+    let defaultPosts = [...initialPosts];
+
+    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === userId);
+
+    if (params?.category) {
+      setPosts(defaultPosts.filter((post) => post.categories.includes(+params.category)));
+    } else {
+      setPosts(defaultPosts);
+    }
+    setSearch("");
+  }, [params]);
+
+  const showMyPosts = () => {
+    let defaultPosts = [...initialPosts];
+    if (params?.category) defaultPosts = defaultPosts.filter((post) => post.categories.includes(+params.category));
+
+    if (!myPostsMode) setPosts(defaultPosts.filter((post) => post.author.id === userId));
+    else setPosts(defaultPosts);
     setMyPostsMode((prevState) => !prevState);
+    setSearch("");
   };
 
   const handleSearch = (e) => {
@@ -177,12 +205,16 @@ function Home() {
   };
 
   useEffect(() => {
+    let defaultPosts = [...initialPosts];
+    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === userId);
+    if (params?.category) defaultPosts = defaultPosts.filter((post) => post.categories.includes(+params.category));
+
     setPosts(
-      initialPosts.filter(
+      defaultPosts.filter(
         (post) =>
           post.title.toLowerCase().includes(search) ||
           post.city.toLowerCase().includes(search) ||
-          post.created.toLowerCase().toDateString().includes(search) ||
+          post.created.toDateString().toLowerCase().includes(search) ||
           post.price.toString().includes(search) ||
           post.currency.toLowerCase().includes(search)
       )
@@ -194,7 +226,7 @@ function Home() {
       <CssBaseline />
       <StyledContainer container>
         <Grid item container justifyContent="space-between" mb={4}>
-          <StyledButton variant="contained" size="large" onClick={() => showMyPosts(1)} color="secondary" sx={{ ml: 3 }}>
+          <StyledButton variant="contained" size="large" onClick={showMyPosts} color="secondary" sx={{ ml: 3 }}>
             {myPostsMode ? "All posts" : "My posts"}
           </StyledButton>
           <StyledTextField

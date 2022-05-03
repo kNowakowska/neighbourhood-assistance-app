@@ -17,7 +17,6 @@ import Icon from "@mui/material/Icon";
 import { pages } from "./routes/Routes";
 
 const StyledMenuButton = styled(IconButton)({
-
   color: "#f1e6e6",
 });
 
@@ -57,6 +56,48 @@ const NavigationBar = (props) => {
     return location.pathname === routeName;
   };
 
+  const generateMenuList = (pages) => {
+    const menu = [];
+    const submenu = [];
+
+    pages.forEach(({children, path, sidebarName, icon}, key) => {
+      if (!children) {
+        menu.push(
+          <StyledNavLink to={path} key={key}>
+            <MenuItem selected={activeRoute(path)}>
+              <ListItemIcon>
+                <Icon>{icon}</Icon>
+              </ListItemIcon>
+              <ListItemText primary={sidebarName} />
+            </MenuItem>
+          </StyledNavLink>
+        );
+      } else {
+        menu.push(
+          <StyledNavLink to={path} key={key}>
+            <MenuItem selected={activeRoute(path)}>
+              <ListItemIcon>
+                <Icon>{icon}</Icon>
+              </ListItemIcon>
+              <ListItemText primary={sidebarName} />
+            </MenuItem>
+          </StyledNavLink>
+        );
+        children.forEach((child, key) => {
+          submenu.push(
+            <StyledNavLink to={child.path} key={`${key}_${child.path}`}>
+              <MenuItem selected={activeRoute(child.path)}>
+                <ListItemText primary={child.sidebarName} />
+              </MenuItem>
+            </StyledNavLink>
+          );
+        });
+        menu.push(<MenuList sx={{ ml: 3 }} key={`submenu_${path}`}>{submenu}</MenuList>);
+      }
+    });
+    return menu;
+  };
+
   return (
     <div>
       <div
@@ -66,7 +107,7 @@ const NavigationBar = (props) => {
       >
         <AppBar position="fixed" enableColorOnDark color="secondary">
           <Toolbar>
-            <StyledMenuButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)} sx={{  mr: 2,}}>
+            <StyledMenuButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)} sx={{ mr: 2 }}>
               <MenuIcon />
             </StyledMenuButton>
             <StyledAppTitle variant="h6">Neighbourhood Assistance</StyledAppTitle>
@@ -75,20 +116,7 @@ const NavigationBar = (props) => {
       </div>
       <StyledDrawer open={isOpen} onClose={toggleDrawer(false)}>
         <div role="presentation" onClick={toggleDrawer(false)}>
-          <MenuList>
-            {pages.map((prop, key) => {
-              return (
-                <StyledNavLink to={prop.path} key={key}>
-                  <MenuItem selected={activeRoute(prop.path)}>
-                    <ListItemIcon>
-                      <Icon>{prop.icon}</Icon>
-                    </ListItemIcon>
-                    <ListItemText primary={prop.sidebarName} />
-                  </MenuItem>
-                </StyledNavLink>
-              );
-            })}
-          </MenuList>
+          <MenuList>{generateMenuList(pages)}</MenuList>
         </div>
       </StyledDrawer>
     </div>

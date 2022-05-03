@@ -7,8 +7,10 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
+import Chip from "@mui/material/Chip";
 
 import no_photo from "../assets/no-photo.png";
+import { categories as categoriesList } from "../utils";
 
 const StyledCard = styled(Card)({
   width: 275,
@@ -24,7 +26,7 @@ const StyledTypography = styled(Typography)({
   width: "50%",
 });
 
-const PostCard = ({ title, created, city, price, currency, photo, id }) => {
+const PostCard = ({ title, created, city, price, currency, photo, id, categories }) => {
   const navigate = useNavigate();
 
   const selectPost = () => {
@@ -32,15 +34,20 @@ const PostCard = ({ title, created, city, price, currency, photo, id }) => {
   };
 
   return (
-    <StyledCard onClick={selectPost} sx={{m:2}}>
+    <StyledCard onClick={selectPost} sx={{ m: 2 }}>
       <CardMedia component="img" height="140" image={no_photo} alt="post-photo" />
       <StyledCardContent>
         <Typography gutterBottom variant="h5" component="div">
           {title}
         </Typography>
-        <Grid container>
-          <StyledTypography variant="body2">{`${created.toDateString()}, ${city}`}</StyledTypography>
-          <StyledTypography variant="body2">{`${price} ${currency}`}</StyledTypography>
+        <Grid container alignItems="center" justifyContent="space-between">
+          <StyledTypography variant="caption">{`${created.toDateString()}, ${city}`}</StyledTypography>
+          <StyledTypography variant="body1">{`${price} ${currency}`}</StyledTypography>
+        </Grid>
+        <Grid container alignItems="center" justifyContent="space-around" sx={{ mt: 2 }}>
+          {categories.map((category) => (
+            <Chip key={category} label={categoriesList.find((item) => item.id === category)?.name_pl} sx={{ mt: 1 }} />
+          ))}
         </Grid>
       </StyledCardContent>
     </StyledCard>

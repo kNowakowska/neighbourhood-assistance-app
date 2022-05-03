@@ -18,3 +18,26 @@ export const currencies = [
     symbol: "$",
   },
 ];
+
+export const categories = [
+  {
+    id: 1,
+    name_pl: "Prace remontowe",
+    name_en: ""
+  },
+  {
+    id: 2,
+    name_pl: "Hydraulika",
+    name_en: ""
+  },
+  {
+    id: 3,
+    name_pl: "Motoryzacja",
+    name_en: ""
+  },
+  {
+    id: 4,
+    name_pl: "Elektryka",
+    name_en: ""
+  }
+]

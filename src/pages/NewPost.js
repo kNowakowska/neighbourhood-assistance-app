@@ -12,9 +12,16 @@ import Icon from "@mui/material/Icon";
 import Autocomplete from "@mui/material/Autocomplete";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
+import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
+import Checkbox from "@mui/material/Checkbox";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
 
 import withNavBar from "../hoc/WithNavBar";
-import { currencies } from "../utils";
+import { currencies, categories } from "../utils";
 
 const StyledContainer = styled(Grid)({
   marginTop: "100px",
@@ -27,6 +34,7 @@ const NewPost = () => {
   const [price, setPrice] = useState(0);
   const [currency, setCurrency] = useState(currencies[0]);
   const [photo, setPhoto] = useState(null);
+  const [category, setCategory] = useState([]);
 
   const handleChangeTitle = (e) => {
     setTitle(e.target.value);
@@ -42,6 +50,13 @@ const NewPost = () => {
 
   const handleChangeCurrency = (e, newValue) => {
     setCurrency(newValue);
+  };
+
+  const handleChangeCategory = (e) => {
+    const {
+      target: { value },
+    } = e;
+    setCategory(typeof value === "string" ? value.split(",") : value);
   };
 
   const savePost = () => {
@@ -68,6 +83,8 @@ const NewPost = () => {
     setCurrency(currencies[0]);
     setPhoto(null);
   };
+
+  const fieldsNotEmpty = () => title && description && price > 0 && category.length;
 
   return (
     <Container component="main">
@@ -106,6 +123,7 @@ const NewPost = () => {
               variant="outlined"
               sx={{ width: "45%", mb: 4, mr: 1 }}
               required
+              error={price < 0}
             />
             <Autocomplete
               options={currencies}
@@ -117,6 +135,32 @@ const NewPost = () => {
               required
               sx={{ width: "45%", mb: 4, ml: 1 }}
             />
+            <FormControl sx={{ width: "90%", mb: 4, ml: 1 }}>
+              <InputLabel>Category</InputLabel>
+              <Select
+                required
+                value={category}
+                onChange={handleChangeCategory}
+                variant="outlined"
+                label="Category"
+                multiple
+                fullWidth
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={categories.find((item) => item.id === value)?.name_pl} />
+                    ))}
+                  </Box>
+                )}
+              >
+                {categories.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    <Checkbox checked={category.includes(item.id)} />
+                    <ListItemText primary={item.name_pl} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Grid item container justifyContent="space-between" sx={{ width: "80%" }}>
               <Button
                 component="label"
@@ -133,7 +177,7 @@ const NewPost = () => {
                 <Button size="large" variant="contained" sx={{ mr: 2 }} onClick={clearFields}>
                   Clear
                 </Button>
-                <Button size="large" variant="contained" color="secondary" onClick={savePost} sx={{ ml: 2 }}>
+                <Button size="large" variant="contained" color="secondary" onClick={savePost} sx={{ ml: 2 }} disabled={!fieldsNotEmpty}>
                   Save
                 </Button>
               </Box>
