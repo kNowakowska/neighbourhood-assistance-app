@@ -8,7 +8,15 @@
     "home":{
         "allPosts":"All posts",
         "myPosts":"My posts",
-        "search":"Search"
+        "search":"Search",
+        "asc":"ascending",
+        "desc":"descending",
+        "title":"Title",
+        "created":"Creation date",
+        "views":"Popularity",
+        "price":"Price",
+        "none":"None",
+        "sort":"Sort"
     },
     "login":{
         "email":"email",

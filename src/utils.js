@@ -41,3 +41,46 @@ export const categories = [
     name_en: "Electrics",
   },
 ];
+
+export const postsSortOptions = [
+  {
+    id: 1,
+    direction: "asc",
+    field: "title",
+  },
+  {
+    id: 2,
+    direction: "desc",
+    field: "title",
+  },
+  {
+    id: 3,
+    direction: "asc",
+    field: "created",
+  },
+  {
+    id: 4,
+    direction: "desc",
+    field: "created",
+  },
+  {
+    id: 5,
+    direction: "asc",
+    field: "price",
+  },
+  {
+    id: 6,
+    direction: "desc",
+    field: "price",
+  },
+  {
+    id: 7,
+    direction: "asc",
+    field: "views",
+  },
+  {
+    id: 8,
+    direction: "desc",
+    field: "views",
+  },
+];

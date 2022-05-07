@@ -27,8 +27,8 @@ const StyledTypography = styled(Typography)({
   width: "50%",
 });
 
-const PostCard = ({ title, created, city, price, currency, photo, id, categories }) => {
-  const { i18n } = useTranslation("core");
+const PostCard = ({ title, created, city, price, currency, photo, id, categories, views }) => {
+  const { i18n, t } = useTranslation("core");
   const navigate = useNavigate();
 
   const selectPost = () => {
@@ -46,7 +46,7 @@ const PostCard = ({ title, created, city, price, currency, photo, id, categories
           <StyledTypography variant="caption">{`${created.toDateString()}, ${city}`}</StyledTypography>
           <StyledTypography variant="body1">{`${price} ${currency}`}</StyledTypography>
         </Grid>
-        <Grid container alignItems="center" justifyContent="space-around" sx={{ mt: 2 }}>
+        <Grid container alignItems="center" justifyContent="space-around" sx={{ mt: 2, mb: 2 }}>
           {categories.map((category) => (
             <Chip
               key={category}
@@ -54,6 +54,9 @@ const PostCard = ({ title, created, city, price, currency, photo, id, categories
               sx={{ mt: 1 }}
             />
           ))}
+        </Grid>
+        <Grid container alignItems="center" justifyContent="center">
+          <StyledTypography variant="caption">{t("post.views", { views: views })}</StyledTypography>
         </Grid>
       </StyledCardContent>
     </StyledCard>
