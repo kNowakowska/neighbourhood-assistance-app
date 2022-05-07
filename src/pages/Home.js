@@ -16,8 +16,8 @@ import Select from "@mui/material/Select";
 
 import PostCard from "../components/PostCard";
 import withNavBar from "../hoc/WithNavBar";
-import { postsSortOptions, currencies, categories } from "../utils";
-import FiltersModal from "../components/FiltersModal"
+import { postsSortOptions, currencies } from "../utils";
+import FiltersModal from "../components/FiltersModal";
 
 const initialPosts = [
   {
@@ -183,7 +183,7 @@ function Home() {
   const [filtersModalOpen, isFiltersModalOpen] = useState(false);
   const [posts, setPosts] = useState(initialPosts);
   const [myPostsMode, setMyPostsMode] = useState(false);
-  const [filters, setFilters] = useState(null)
+  const [filters, setFilters] = useState(null);
   const userId = 1;
 
   let params = useParams();
@@ -200,7 +200,7 @@ function Home() {
     }
     setSearch("");
     setSort("");
-    setFilters(null)
+    setFilters(null);
   }, [params]);
 
   const showMyPosts = () => {
@@ -212,13 +212,13 @@ function Home() {
     setMyPostsMode((prevState) => !prevState);
     setSearch("");
     setSort("");
-    setFilters(null)
+    setFilters(null);
   };
 
   const handleSearch = (e) => {
     setSearch(e.target.value.toLowerCase());
-    setFilters(null)
-    setSort("")
+    setFilters(null);
+    setSort("");
   };
 
   useEffect(() => {
@@ -242,25 +242,27 @@ function Home() {
     let defaultPosts = [...initialPosts];
     if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === userId);
     if (params?.category) defaultPosts = defaultPosts.filter((post) => post.categories.includes(+params.category));
-    if (filters){
-      if(filters.minPrice){
-        defaultPosts = defaultPosts.filter(post => post.price >= filters.minPrice)
+    if (filters) {
+      if (filters.minPrice) {
+        defaultPosts = defaultPosts.filter((post) => post.price >= filters.minPrice);
       }
-  
-      if(filters.maxPrice){
-        defaultPosts = defaultPosts.filter(post => post.price <= filters.maxPrice)
+
+      if (filters.maxPrice) {
+        defaultPosts = defaultPosts.filter((post) => post.price <= filters.maxPrice);
       }
-  
-      if(filters.currencies.length){
-        defaultPosts = defaultPosts.filter(post => filters.currencies.includes(currencies.find(curr => curr.curr === post.currency)?.id))
+
+      if (filters.currencies.length) {
+        defaultPosts = defaultPosts.filter((post) =>
+          filters.currencies.includes(currencies.find((curr) => curr.curr === post.currency)?.id)
+        );
       }
-  
-      if(filters.cities.length){
-        defaultPosts = defaultPosts.filter(post => filters.cities.includes(post.city))
+
+      if (filters.cities.length) {
+        defaultPosts = defaultPosts.filter((post) => filters.cities.includes(post.city));
       }
-  
-      if(filters.categories.length){
-        defaultPosts = defaultPosts.filter(post => filters.categories.some(category => post.categories.includes(category)))
+
+      if (filters.categories.length) {
+        defaultPosts = defaultPosts.filter((post) => filters.categories.some((category) => post.categories.includes(category)));
       }
     }
 
@@ -312,7 +314,7 @@ function Home() {
   const applyFilters = (minPrice, maxPrice, selectedCurrencies, selectedCities, selectedCategories) => {
     let defaultPosts = [...initialPosts];
 
-    if(sort){
+    if (sort) {
       const sortOption = postsSortOptions.find((item) => item.id === sort);
       switch (sortOption?.field) {
         case "title":
@@ -336,32 +338,34 @@ function Home() {
       }
     }
 
-    if(minPrice){
-      defaultPosts = defaultPosts.filter(post => post.price >= minPrice)
+    if (minPrice) {
+      defaultPosts = defaultPosts.filter((post) => post.price >= minPrice);
     }
 
-    if(maxPrice){
-      defaultPosts = defaultPosts.filter(post => post.price <= maxPrice)
+    if (maxPrice) {
+      defaultPosts = defaultPosts.filter((post) => post.price <= maxPrice);
     }
 
-    if(selectedCurrencies.length){
-      defaultPosts = defaultPosts.filter(post => selectedCurrencies.includes(currencies.find(curr => curr.curr === post.currency)?.id))
+    if (selectedCurrencies.length) {
+      defaultPosts = defaultPosts.filter((post) =>
+        selectedCurrencies.includes(currencies.find((curr) => curr.curr === post.currency)?.id)
+      );
     }
 
-    if(selectedCities.length){
-      defaultPosts = defaultPosts.filter(post => selectedCities.includes(post.city))
+    if (selectedCities.length) {
+      defaultPosts = defaultPosts.filter((post) => selectedCities.includes(post.city));
     }
 
-    if(selectedCategories.length){
-      defaultPosts = defaultPosts.filter(post => selectedCategories.some(category => post.categories.includes(category)))
+    if (selectedCategories.length) {
+      defaultPosts = defaultPosts.filter((post) => selectedCategories.some((category) => post.categories.includes(category)));
     }
 
     setMyPostsMode(false);
-    setSearch("")
+    setSearch("");
     isFiltersModalOpen(false);
-    setFilters({minPrice, maxPrice, currencies: selectedCurrencies, cities: selectedCities, categories: selectedCategories})
-    setPosts(defaultPosts)
-  }
+    setFilters({ minPrice, maxPrice, currencies: selectedCurrencies, cities: selectedCities, categories: selectedCategories });
+    setPosts(defaultPosts);
+  };
 
   return (
     <main style={{ maxWidth: "80%", marginLeft: "auto", marginRight: "auto" }}>
@@ -374,9 +378,11 @@ function Home() {
             </StyledButton>
           </Grid>
           <Grid item xs={9} container display="inline-flex" alignItems="center" justifyContent="flex-end">
-            {!params?.category ? <Button size="large" variant="contained" color="secondary" onClick={openFiltersModal} sx={{ mr: 1 }}>
-              {t("home.filters")}
-            </Button> : null}
+            {!params?.category ? (
+              <Button size="large" variant="contained" color="secondary" onClick={openFiltersModal} sx={{ mr: 1 }}>
+                {t("home.filters")}
+              </Button>
+            ) : null}
             <FormControl sx={{ width: 250, mr: 1 }}>
               <InputLabel id="sort-select-label">{t("home.sort")}</InputLabel>
               <Select
@@ -420,12 +426,15 @@ function Home() {
           <PostCard key={post.id} {...post} />
         ))}
       </StyledContainer>
-      {
-        closeFiltersModal ?
-        <FiltersModal filters={filters} onClose={closeFiltersModal} open={filtersModalOpen} cities={[...new Set(initialPosts.map(post => post.city))]} applyFilters={applyFilters}/>
-        : null
-      }
-      
+      {closeFiltersModal ? (
+        <FiltersModal
+          filters={filters}
+          onClose={closeFiltersModal}
+          open={filtersModalOpen}
+          cities={[...new Set(initialPosts.map((post) => post.city))]}
+          applyFilters={applyFilters}
+        />
+      ) : null}
     </main>
   );
 }
