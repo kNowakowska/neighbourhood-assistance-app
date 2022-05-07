@@ -16,7 +16,8 @@ import Select from "@mui/material/Select";
 
 import PostCard from "../components/PostCard";
 import withNavBar from "../hoc/WithNavBar";
-import { postsSortOptions } from "../utils";
+import { postsSortOptions, currencies, categories } from "../utils";
+import FiltersModal from "../components/FiltersModal"
 
 const initialPosts = [
   {
@@ -178,9 +179,11 @@ const StyledTextField = styled(TextField)({
 function Home() {
   const { t } = useTranslation("core");
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState(null);
+  const [sort, setSort] = useState("");
+  const [filtersModalOpen, isFiltersModalOpen] = useState(false);
   const [posts, setPosts] = useState(initialPosts);
   const [myPostsMode, setMyPostsMode] = useState(false);
+  const [filters, setFilters] = useState(null)
   const userId = 1;
 
   let params = useParams();
@@ -196,6 +199,8 @@ function Home() {
       setPosts(defaultPosts);
     }
     setSearch("");
+    setSort("");
+    setFilters(null)
   }, [params]);
 
   const showMyPosts = () => {
@@ -206,10 +211,14 @@ function Home() {
     else setPosts(defaultPosts);
     setMyPostsMode((prevState) => !prevState);
     setSearch("");
+    setSort("");
+    setFilters(null)
   };
 
   const handleSearch = (e) => {
     setSearch(e.target.value.toLowerCase());
+    setFilters(null)
+    setSort("")
   };
 
   useEffect(() => {
@@ -233,6 +242,27 @@ function Home() {
     let defaultPosts = [...initialPosts];
     if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === userId);
     if (params?.category) defaultPosts = defaultPosts.filter((post) => post.categories.includes(+params.category));
+    if (filters){
+      if(filters.minPrice){
+        defaultPosts = defaultPosts.filter(post => post.price >= filters.minPrice)
+      }
+  
+      if(filters.maxPrice){
+        defaultPosts = defaultPosts.filter(post => post.price <= filters.maxPrice)
+      }
+  
+      if(filters.currencies.length){
+        defaultPosts = defaultPosts.filter(post => filters.currencies.includes(currencies.find(curr => curr.curr === post.currency)?.id))
+      }
+  
+      if(filters.cities.length){
+        defaultPosts = defaultPosts.filter(post => filters.cities.includes(post.city))
+      }
+  
+      if(filters.categories.length){
+        defaultPosts = defaultPosts.filter(post => filters.categories.some(category => post.categories.includes(category)))
+      }
+    }
 
     const sortOption = postsSortOptions.find((item) => item.id === sort);
     switch (sortOption?.field) {
@@ -271,15 +301,82 @@ function Home() {
 
   const viewsSort = (a, b) => a.views - b.views;
 
+  const openFiltersModal = () => {
+    isFiltersModalOpen(true);
+  };
+
+  const closeFiltersModal = () => {
+    isFiltersModalOpen(false);
+  };
+
+  const applyFilters = (minPrice, maxPrice, selectedCurrencies, selectedCities, selectedCategories) => {
+    let defaultPosts = [...initialPosts];
+
+    if(sort){
+      const sortOption = postsSortOptions.find((item) => item.id === sort);
+      switch (sortOption?.field) {
+        case "title":
+          defaultPosts = [...defaultPosts.sort(titleSort)];
+          break;
+        case "created":
+          defaultPosts = [...defaultPosts.sort(createdSort)];
+          break;
+        case "price":
+          defaultPosts = [...defaultPosts.sort(priceSort)];
+          break;
+        case "views":
+          defaultPosts = [...defaultPosts.sort(viewsSort)];
+          break;
+        default:
+          defaultPosts = [...defaultPosts];
+      }
+
+      if (sortOption?.direction === "desc") {
+        defaultPosts = [...defaultPosts.reverse()];
+      }
+    }
+
+    if(minPrice){
+      defaultPosts = defaultPosts.filter(post => post.price >= minPrice)
+    }
+
+    if(maxPrice){
+      defaultPosts = defaultPosts.filter(post => post.price <= maxPrice)
+    }
+
+    if(selectedCurrencies.length){
+      defaultPosts = defaultPosts.filter(post => selectedCurrencies.includes(currencies.find(curr => curr.curr === post.currency)?.id))
+    }
+
+    if(selectedCities.length){
+      defaultPosts = defaultPosts.filter(post => selectedCities.includes(post.city))
+    }
+
+    if(selectedCategories.length){
+      defaultPosts = defaultPosts.filter(post => selectedCategories.some(category => post.categories.includes(category)))
+    }
+
+    setMyPostsMode(false);
+    setSearch("")
+    isFiltersModalOpen(false);
+    setFilters({minPrice, maxPrice, currencies: selectedCurrencies, cities: selectedCities, categories: selectedCategories})
+    setPosts(defaultPosts)
+  }
+
   return (
     <main style={{ maxWidth: "80%", marginLeft: "auto", marginRight: "auto" }}>
       <CssBaseline />
       <StyledContainer container>
-        <Grid item container justifyContent="space-between" mb={4}>
-          <StyledButton variant="contained" size="large" onClick={showMyPosts} color="secondary" sx={{ ml: 3 }}>
-            {myPostsMode ? t("home.allPosts") : t("home.myPosts")}
-          </StyledButton>
-          <Grid item>
+        <Grid item container justifyContent="space-between" mb={4} alignItems="center">
+          <Grid item xs={3}>
+            <StyledButton variant="contained" size="large" onClick={showMyPosts} color="secondary" sx={{ ml: 3 }}>
+              {myPostsMode ? t("home.allPosts") : t("home.myPosts")}
+            </StyledButton>
+          </Grid>
+          <Grid item xs={9} container display="inline-flex" alignItems="center" justifyContent="flex-end">
+            {!params?.category ? <Button size="large" variant="contained" color="secondary" onClick={openFiltersModal} sx={{ mr: 1 }}>
+              {t("home.filters")}
+            </Button> : null}
             <FormControl sx={{ width: 250, mr: 1 }}>
               <InputLabel id="sort-select-label">{t("home.sort")}</InputLabel>
               <Select
@@ -291,13 +388,13 @@ function Home() {
                 displayEmpty
                 renderValue={(value) => {
                   const option = postsSortOptions.find((item) => item.id === value);
-                  return option ? `${t(`home.${option.field}`)} ${t(`home.${option.direction}`)}` : "";
+                  return option ? `${t(`home.sortFields.${option.field}`)} ${t(`home.sortFields.${option.direction}`)}` : "";
                 }}
               >
                 <MenuItem value="">{t("home.none")}</MenuItem>
                 {postsSortOptions.map((option) => (
-                  <MenuItem key={option.id} value={option.id}>{`${t(`home.${option.field}`)} ${t(
-                    `home.${option.direction}`
+                  <MenuItem key={option.id} value={option.id}>{`${t(`home.sortFields.${option.field}`)} ${t(
+                    `home.sortFields.${option.direction}`
                   )}`}</MenuItem>
                 ))}
               </Select>
@@ -323,6 +420,12 @@ function Home() {
           <PostCard key={post.id} {...post} />
         ))}
       </StyledContainer>
+      {
+        closeFiltersModal ?
+        <FiltersModal filters={filters} onClose={closeFiltersModal} open={filtersModalOpen} cities={[...new Set(initialPosts.map(post => post.city))]} applyFilters={applyFilters}/>
+        : null
+      }
+      
     </main>
   );
 }

@@ -9,14 +9,25 @@
         "allPosts":"Wszystkie posty",
         "myPosts":"Moje posty",
         "search":"Szukaj",
-        "asc":"rosnąco",
-        "desc":"malejąco",
-        "title":"Tytule",
-        "created":"Dacie utworzenia",
-        "views":"Popularności",
-        "price":"Cenie",
+        "sortFields":{
+            "asc":"rosnąco",
+            "desc":"malejąco",
+            "title":"Tytule",
+            "created":"Dacie utworzenia",
+            "views":"Popularności",
+            "price":"Cenie"
+        },
         "none":"Brak",
-        "sort":"Sortuj po"
+        "sort":"Sortuj po",
+        "filters":"Filtry",
+        "cancel":"Anuluj",
+        "applyFilters":"Zastosuj filtry",
+        "price":"Cena",
+        "currencies":"Waluty",
+        "minPrice":"Minimalna cena",
+        "maxPrice":"Maksymalna cena",
+        "categories":"Kategorie",
+        "cities":"Miasta"
     },
     "login":{
         "email":"email",
