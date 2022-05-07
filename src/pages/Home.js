@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -170,6 +171,7 @@ const StyledTextField = styled(TextField)({
 });
 
 function Home() {
+  const { t } = useTranslation("core");
   const [search, setSearch] = useState("");
   const [posts, setPosts] = useState(initialPosts);
   const [myPostsMode, setMyPostsMode] = useState(false);
@@ -227,10 +229,10 @@ function Home() {
       <StyledContainer container>
         <Grid item container justifyContent="space-between" mb={4}>
           <StyledButton variant="contained" size="large" onClick={showMyPosts} color="secondary" sx={{ ml: 3 }}>
-            {myPostsMode ? "All posts" : "My posts"}
+            {myPostsMode ? t("home.allPosts") : t("home.myPosts")}
           </StyledButton>
           <StyledTextField
-            label="Search"
+            label={t("home.search")}
             value={search}
             type="search"
             variant="outlined"

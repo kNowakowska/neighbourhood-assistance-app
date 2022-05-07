@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
@@ -27,6 +28,7 @@ const StyledTypography = styled(Typography)({
 });
 
 const PostCard = ({ title, created, city, price, currency, photo, id, categories }) => {
+  const { i18n } = useTranslation("core");
   const navigate = useNavigate();
 
   const selectPost = () => {
@@ -46,7 +48,11 @@ const PostCard = ({ title, created, city, price, currency, photo, id, categories
         </Grid>
         <Grid container alignItems="center" justifyContent="space-around" sx={{ mt: 2 }}>
           {categories.map((category) => (
-            <Chip key={category} label={categoriesList.find((item) => item.id === category)?.name_pl} sx={{ mt: 1 }} />
+            <Chip
+              key={category}
+              label={categoriesList.find((item) => item.id === category)?.[`name_${i18n.language}`]}
+              sx={{ mt: 1 }}
+            />
           ))}
         </Grid>
       </StyledCardContent>

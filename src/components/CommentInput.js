@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
@@ -18,6 +19,7 @@ const StyledTextField = styled(TextField)({
 });
 
 const CommentInput = ({ onSave }) => {
+  const { t } = useTranslation("core");
   const [rate, setRate] = useState(5);
   const [comment, setComment] = useState("");
 
@@ -34,7 +36,7 @@ const CommentInput = ({ onSave }) => {
       <StyledTextField value={comment} onChange={handleChangeComment} multiline />
       <Rating name="read-only" value={rate} onChange={handleChangeRate} precision={0.5} />
       <Button variant="contained" color="secondary" disabled={!comment} onClick={onSave}>
-        Save
+        {t("profile.save")}
       </Button>
     </StyledCard>
   );

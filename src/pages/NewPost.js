@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useConfirm } from "material-ui-confirm";
+import { useTranslation } from "react-i18next";
 
 import { styled } from "@mui/material/styles";
 import Container from "@mui/material/Container";
@@ -28,6 +29,7 @@ const StyledContainer = styled(Grid)({
 });
 
 const NewPost = () => {
+  const { t, i18n } = useTranslation("core");
   const confirm = useConfirm();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -60,7 +62,12 @@ const NewPost = () => {
   };
 
   const savePost = () => {
-    confirm({ title: "Create post", description: "Are you sure you want to add new post?", confirmationText: "Create" })
+    confirm({
+      title: t("newPost.createPost"),
+      description: t("newPost.createConfirmationDesc"),
+      confirmationText: t("newPost.create"),
+      cancellationText: t("newPost.cancel"),
+    })
       .then(() => {
         console.log("created");
       })
@@ -93,10 +100,10 @@ const NewPost = () => {
         <Paper>
           <Grid container sx={{ p: 3 }} justifyContent="center" alignItems="center">
             <Typography variant="h6" sx={{ mb: 5 }}>
-              Add new post
+              {t("newPost.addNewPost")}
             </Typography>
             <TextField
-              label="Title"
+              label={t("newPost.title")}
               value={title}
               onChange={handleChangeTitle}
               variant="outlined"
@@ -105,7 +112,7 @@ const NewPost = () => {
               sx={{ mb: 4 }}
             />
             <TextField
-              label="Description"
+              label={t("newPost.description")}
               value={description}
               onChange={handleChangeDescription}
               variant="outlined"
@@ -116,7 +123,7 @@ const NewPost = () => {
               minRows={5}
             />
             <TextField
-              label="Price"
+              label={t("newPost.price")}
               value={price}
               onChange={handleChangePrice}
               type="number"
@@ -129,26 +136,26 @@ const NewPost = () => {
               options={currencies}
               value={currency}
               onChange={handleChangeCurrency}
-              renderInput={(params) => <TextField {...params} label="Currency" />}
+              renderInput={(params) => <TextField {...params} label={t("newPost.currency")} />}
               getOptionLabel={(option) => `${option.symbol} ${option.curr}`}
               variant="outlined"
               required
               sx={{ width: "45%", mb: 4, ml: 1 }}
             />
             <FormControl sx={{ width: "90%", mb: 4, ml: 1 }}>
-              <InputLabel>Category</InputLabel>
+              <InputLabel>{t("newPost.category")}</InputLabel>
               <Select
                 required
                 value={category}
                 onChange={handleChangeCategory}
                 variant="outlined"
-                label="Category"
+                label={t("newPost.category")}
                 multiple
                 fullWidth
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((value) => (
-                      <Chip key={value} label={categories.find((item) => item.id === value)?.name_pl} />
+                      <Chip key={value} label={categories.find((item) => item.id === value)?.[`name_${i18n.language}`]} />
                     ))}
                   </Box>
                 )}
@@ -156,7 +163,7 @@ const NewPost = () => {
                 {categories.map((item) => (
                   <MenuItem key={item.id} value={item.id}>
                     <Checkbox checked={category.includes(item.id)} />
-                    <ListItemText primary={item.name_pl} />
+                    <ListItemText primary={item[`name_${i18n.language}`]} />
                   </MenuItem>
                 ))}
               </Select>
@@ -170,15 +177,22 @@ const NewPost = () => {
                 onClick={uploadPhoto}
                 startIcon={<Icon>add_a_photo</Icon>}
               >
-                {photo ? photo.name : "Upload photo"}
+                {photo ? photo.name : t("newPost.uploadPhoto")}
                 <input type="file" hidden onChange={uploadPhoto} accept="image/jpeg,image/png" />
               </Button>
               <Box>
                 <Button size="large" variant="contained" sx={{ mr: 2 }} onClick={clearFields}>
-                  Clear
+                  {t("newPost.clear")}
                 </Button>
-                <Button size="large" variant="contained" color="secondary" onClick={savePost} sx={{ ml: 2 }} disabled={!fieldsNotEmpty}>
-                  Save
+                <Button
+                  size="large"
+                  variant="contained"
+                  color="secondary"
+                  onClick={savePost}
+                  sx={{ ml: 2 }}
+                  disabled={!fieldsNotEmpty}
+                >
+                  {t("newPost.save")}
                 </Button>
               </Box>
             </Grid>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ScheduleSelector from "react-schedule-selector";
+import { useTranslation } from "react-i18next";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -118,6 +119,7 @@ const StyledCommentsSection = styled(Box)({
 });
 
 const Profile = () => {
+  const { t } = useTranslation("core");
   const [editMode, setEditMode] = useState({ name: false, lastName: false, phoneNumber: false, city: false });
   const [addCommentMode, setAddCommentMode] = useState(false);
   const [user, setUser] = useState(initialUser);
@@ -156,7 +158,7 @@ const Profile = () => {
         default:
           break;
       }
-      setSchedule(newSchedule)
+      setSchedule(newSchedule);
     });
   };
 
@@ -216,23 +218,19 @@ const Profile = () => {
       <StyledContainer container>
         <Grid item xs={3}>
           <StyledAvatar alt={`${user.name} ${user.last_name} avatar`} src={user.photo} />
-          <StyledItalicAuthorData
-            variant="body2"
-            align="center"
-            sx={{ mt: 3 }}
-          >{`Registered ${user.created.toDateString()}`}</StyledItalicAuthorData>
-          <StyledItalicAuthorData
-            variant="body2"
-            align="center"
-            sx={{ mt: 3 }}
-          >{`Last seen ${user.last_active.toDateString()}`}</StyledItalicAuthorData>
+          <StyledItalicAuthorData variant="body2" align="center" sx={{ mt: 3 }}>
+            {t("profile.registered", { date: user.created.toDateString() })}
+          </StyledItalicAuthorData>
+          <StyledItalicAuthorData variant="body2" align="center" sx={{ mt: 3 }}>
+            {t("profile.lastSeen", { date: user.last_active.toDateString() })}
+          </StyledItalicAuthorData>
           <StyledRating name="read-only" value={user.avg_rate} readOnly precision={0.5} sx={{ mt: 3, ml: 4 }} />
         </Grid>
         <Grid item container xs={9}>
           <StyledBox>
             <StyledTextField
               value={user.name}
-              label="Name"
+              label={t("profile.name")}
               onChange={(e) => handleChangeUser(e, "name")}
               fullWidth
               disabled={!editMode.name}
@@ -246,7 +244,7 @@ const Profile = () => {
           <StyledBox>
             <StyledTextField
               value={user.last_name}
-              label="Last Name"
+              label={t("profile.lastName")}
               onChange={(e) => handleChangeUser(e, "lastName")}
               fullWidth
               disabled={!editMode.lastName}
@@ -260,7 +258,7 @@ const Profile = () => {
           <StyledBox>
             <StyledTextField
               value={user.phone_number}
-              label="Phone number"
+              label={t("profile.phoneNumber")}
               type="tel"
               onChange={(e) => handleChangeUser(e, "phoneNumber")}
               fullWidth
@@ -275,7 +273,7 @@ const Profile = () => {
           <StyledBox>
             <StyledTextField
               value={user.city}
-              label="City"
+              label={t("profile.city")}
               type="city"
               onChange={(e) => handleChangeUser(e, "city")}
               fullWidth
@@ -305,13 +303,13 @@ const Profile = () => {
           <StyledDivider />
 
           <StyledCommentsSectionTitle variant="caption" align="left" sx={{ mt: 1 }}>
-            comments
+            {t("profile.comments")}
           </StyledCommentsSectionTitle>
           {addCommentMode ? (
             <CommentInput onSave={saveComment} />
           ) : (
             <StyledCommentsSection sx={{ mb: 2 }}>
-              <Tooltip title="Add comment" placement="right">
+              <Tooltip title={t("profile.addComment")} placement="right">
                 <IconButton onClick={() => setAddCommentMode(!addCommentMode)}>
                   <AddCircleIcon />
                 </IconButton>

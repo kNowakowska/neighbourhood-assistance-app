@@ -1,0 +1,59 @@
+{
+    "toasts":{
+        "changeLang":"Zmiana języka powiodła się!"
+    },
+    "errors":{
+        "notFound": "Błąd 404, Strona nie odnaleziona "
+    },
+    "home":{
+        "allPosts":"Wszystkie posty",
+        "myPosts":"Moje posty",
+        "search":"Szukaj"
+    },
+    "login":{
+        "email":"email",
+        "password":"hasło",
+        "noAccount":"Nie masz konta? ",
+        "signUp":"Zarejestruj się",
+        "signIn":"Zaloguj się"
+    },
+    "newPost":{
+        "createPost":"Utwórz post",
+        "create":"Utwórz",
+        "createConfirmationDesc":"Czy na pewno chcesz dodać nowy post?",
+        "cancel":"Anuluj",
+        "title":"Tytuł",
+        "addNewPost":"Dodaj nowy post",
+        "description":"Opis",
+        "price":"Cena",
+        "currency":"Waluta",
+        "category":"Kategoria",
+        "uploadPhoto":"Załaduj zdjęcie",
+        "clear":"Wyczyść",
+        "save":"Zapisz"
+    },
+    "post":{
+        "deletePost":"Usuń post",
+        "deletePostConfirmationDesc":"Tej operacji nie da się cofnąć! Czy na pewno chcesz usunąć ten post?",
+        "delete":"Usuń",
+        "cancel":"Anuluj",
+        "views":"Wyświetlenia: {{views}}",
+        "reportPost":"Zgłoś post"
+    },
+    "profile":{
+        "password":"Hasło",
+        "repeatPassword":"Powtórz hasło",
+        "differentPassword":"Hasła muszą być takie same!",
+        "email":"Email",
+        "registered":"Zarejestrowany {{date}}",
+        "lastSeen":"Ostatnio widziany {{date}}",
+        "name":"Imie",
+        "lastName":"Nazwisko",
+        "phoneNumber":"Numer telefonu",
+        "city":"Miasto",
+        "comments":"Komentarze",
+        "addComment":"Dodaj komentarz",
+        "haveAnAccount":"Masz już konto? ",
+        "save":"Zapisz"
+    }
+}

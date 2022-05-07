@@ -23,21 +23,21 @@ export const categories = [
   {
     id: 1,
     name_pl: "Prace remontowe",
-    name_en: ""
+    name_en: "Renovation works",
   },
   {
     id: 2,
     name_pl: "Hydraulika",
-    name_en: ""
+    name_en: "Hydraulics",
   },
   {
     id: 3,
     name_pl: "Motoryzacja",
-    name_en: ""
+    name_en: "Motorization",
   },
   {
     id: 4,
     name_pl: "Elektryka",
-    name_en: ""
-  }
-]
+    name_en: "Electrics",
+  },
+];

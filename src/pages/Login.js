@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -25,6 +26,7 @@ const StyledCardContent = styled(CardContent)({
 
 const StyledTextField = styled(TextField)({
   marginBottom: 15,
+  textTransform: "capitalize",
 });
 
 const StyledButton = styled(Button)({
@@ -42,6 +44,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation("core");
 
   const handleChangeEmail = (e) => {
     setEmail(e.target.value);
@@ -65,7 +68,7 @@ const Login = () => {
           <StyledTextField
             value={email}
             type="email"
-            label="Email"
+            label={t("login.email")}
             onChange={handleChangeEmail}
             fullWidth
             required
@@ -75,7 +78,7 @@ const Login = () => {
           <StyledTextField
             value={password}
             type="password"
-            label="Password"
+            label={t("login.password")}
             onChange={handleChangePassword}
             fullWidth
             required
@@ -84,11 +87,11 @@ const Login = () => {
           />
           <Grid container justifyContent="space-between">
             <Grid item>
-              {"Don't have an account? "}
-              <StyledLink href="/sign_up">{"Sign Up"}</StyledLink>
+              {t("login.noAccount")}
+              <StyledLink href="/sign_up">{t("login.signUp")}</StyledLink>
             </Grid>
             <StyledButton onClick={login} variant="contained" disabled={!email || !password}>
-              Sign in
+              {t("login.signIn")}
             </StyledButton>
           </Grid>
         </StyledCardContent>

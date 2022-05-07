@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -38,6 +39,7 @@ const StyledLink = styled(Link)({
 });
 
 const SignUp = () => {
+  const { t } = useTranslation("core");
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -90,7 +92,7 @@ const SignUp = () => {
             <Grid item xs>
               <StyledTextField
                 value={name}
-                label="Name"
+                label={t("profile.name")}
                 onChange={handleChangeName}
                 fullWidth
                 required
@@ -101,7 +103,7 @@ const SignUp = () => {
             <Grid item xs>
               <StyledTextField
                 value={lastName}
-                label="Last name"
+                label={t("profile.lastName")}
                 onChange={handleChangeLastName}
                 fullWidth
                 required
@@ -113,7 +115,7 @@ const SignUp = () => {
           <StyledTextField
             value={email}
             type="email"
-            label="Email"
+            label={t("profile.email")}
             onChange={handleChangeEmail}
             fullWidth
             required
@@ -123,7 +125,7 @@ const SignUp = () => {
           <StyledTextField
             value={password}
             type="password"
-            label="Password"
+            label={t("profile.password")}
             onChange={handleChangePassword}
             fullWidth
             required
@@ -133,20 +135,20 @@ const SignUp = () => {
           <StyledTextField
             value={repeatedPassword}
             type="password"
-            label="Repeat Password"
+            label={t("profile.repeatPassword")}
             onChange={handleChangeRepeatedPassword}
             fullWidth
             required
             variant="outlined"
             error={repeatedPassword !== password}
-            helperText={repeatedPassword !== password ? "Repeated password must be the same!" : ""}
+            helperText={repeatedPassword !== password ? t("profile.differentPassword") : ""}
           />
           <Grid container spacing={2}>
             <Grid item xs>
               <StyledTextField
                 value={phoneNumber}
                 type="tel"
-                label="Phone number"
+                label={t("profile.phoneNumber")}
                 onChange={handleChangePhoneNumber}
                 fullWidth
                 required
@@ -157,7 +159,7 @@ const SignUp = () => {
             <Grid item xs>
               <StyledTextField
                 value={city}
-                label="City"
+                label={t("profile.city")}
                 onChange={handleChangeCity}
                 fullWidth
                 required
@@ -168,11 +170,11 @@ const SignUp = () => {
           </Grid>
           <Grid container justifyContent="space-between">
             <Grid item>
-              {"Already have an account? "}
-              <StyledLink href="/">{"Sign In"}</StyledLink>
+              {t("profile.haveAnAccount")}
+              <StyledLink href="/">{t("login.signIn")}</StyledLink>
             </Grid>
             <StyledButton onClick={signUp} variant="contained" disabled={ifAnyEmptyField}>
-              Sign up
+              {t("login.signUp")}
             </StyledButton>
           </Grid>
         </StyledCardContent>

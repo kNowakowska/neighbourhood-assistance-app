@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { styled } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -13,6 +14,11 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Icon from "@mui/material/Icon";
+import LogoutIcon from "@mui/icons-material/Logout";
+import LanguageIcon from "@mui/icons-material/Language";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import Avatar from "@mui/material/Avatar";
 
 import { pages } from "./routes/Routes";
 
@@ -45,22 +51,49 @@ const StyledNavLink = styled(NavLink)({
 });
 
 const NavigationBar = (props) => {
+  const { i18n, t } = useTranslation("core");
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const toggleDrawer = (open) => (event) => {
-    setIsOpen(open);
+    setIsDrawerOpen(open);
   };
 
   const activeRoute = (routeName) => {
     return location.pathname === routeName;
   };
 
+  const logout = () => {
+    //usunięcię danych o zalogowanym użytkowniku
+    navigate("/");
+  };
+
+  const openProfile = () => {
+    navigate("/profile/1");
+  };
+
+  const closeAlert = () => {
+    setIsAlertOpen(false);
+  };
+
+  const changeLanguage = () => {
+    if (i18n.language === "en") {
+      i18n.changeLanguage("pl");
+      localStorage.setItem("lng", "pl");
+    } else {
+      i18n.changeLanguage("en");
+      localStorage.setItem("lng", "en");
+    }
+    setIsAlertOpen(true);
+  };
+
   const generateMenuList = (pages) => {
     const menu = [];
     const submenu = [];
 
-    pages.forEach(({children, path, sidebarName, icon}, key) => {
+    pages.forEach(({ children, path, sidebarName_en, sidebarName_pl, icon }, key) => {
       if (!children) {
         menu.push(
           <StyledNavLink to={path} key={key}>
@@ -68,7 +101,7 @@ const NavigationBar = (props) => {
               <ListItemIcon>
                 <Icon>{icon}</Icon>
               </ListItemIcon>
-              <ListItemText primary={sidebarName} />
+              <ListItemText primary={i18n.language === "en" ? sidebarName_en : sidebarName_pl} />
             </MenuItem>
           </StyledNavLink>
         );
@@ -79,7 +112,7 @@ const NavigationBar = (props) => {
               <ListItemIcon>
                 <Icon>{icon}</Icon>
               </ListItemIcon>
-              <ListItemText primary={sidebarName} />
+              <ListItemText primary={i18n.language === "en" ? sidebarName_en : sidebarName_pl} />
             </MenuItem>
           </StyledNavLink>
         );
@@ -87,12 +120,16 @@ const NavigationBar = (props) => {
           submenu.push(
             <StyledNavLink to={child.path} key={`${key}_${child.path}`}>
               <MenuItem selected={activeRoute(child.path)}>
-                <ListItemText primary={child.sidebarName} />
+                <ListItemText primary={i18n.language === "en" ? child.sidebarName_en : child.sidebarName_pl} />
               </MenuItem>
             </StyledNavLink>
           );
         });
-        menu.push(<MenuList sx={{ ml: 3 }} key={`submenu_${path}`}>{submenu}</MenuList>);
+        menu.push(
+          <MenuList sx={{ ml: 3 }} key={`submenu_${path}`}>
+            {submenu}
+          </MenuList>
+        );
       }
     });
     return menu;
@@ -111,14 +148,28 @@ const NavigationBar = (props) => {
               <MenuIcon />
             </StyledMenuButton>
             <StyledAppTitle variant="h6">Neighbourhood Assistance</StyledAppTitle>
+            <IconButton onClick={changeLanguage}>
+              <LanguageIcon />
+            </IconButton>
+            <IconButton onClick={openProfile} sx={{ marginLeft: 1 }}>
+              <Avatar />
+            </IconButton>
+            <IconButton onClick={logout} sx={{ marginLeft: 1 }}>
+              <LogoutIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
       </div>
-      <StyledDrawer open={isOpen} onClose={toggleDrawer(false)}>
+      <StyledDrawer open={isDrawerOpen} onClose={toggleDrawer(false)}>
         <div role="presentation" onClick={toggleDrawer(false)}>
           <MenuList>{generateMenuList(pages)}</MenuList>
         </div>
       </StyledDrawer>
+      <Snackbar open={isAlertOpen} autoHideDuration={6000} onClose={closeAlert}>
+        <Alert onClose={closeAlert} severity="success" sx={{ width: "100%" }}>
+          {t("toasts.changeLang")}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

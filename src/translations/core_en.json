@@ -1,0 +1,59 @@
+{
+    "toasts":{
+        "changeLang":"Changing language succeeded!"
+    },
+    "errors":{
+        "notFound": "404 error, Page not Found "
+    },
+    "home":{
+        "allPosts":"All posts",
+        "myPosts":"My posts",
+        "search":"Search"
+    },
+    "login":{
+        "email":"email",
+        "password":"password",
+        "noAccount":"Don't have an account? ",
+        "signUp":"Sign up",
+        "signIn":"Sign in"
+    },
+    "newPost":{
+        "createPost":"Create post",
+        "create":"Create",
+        "createConfirmationDesc":"Are you sure you want to add new post?",
+        "cancel":"Cancel",
+        "title":"Title",
+        "addNewPost":"Add new post",
+        "description":"Description",
+        "price":"Price",
+        "currency":"Currency",
+        "category":"Category",
+        "uploadPhoto":"Upload photo",
+        "clear":"Clear",
+        "save":"Save"
+    },
+    "post":{
+        "deletePost":"Delete post",
+        "deletePostConfirmationDesc":"This action in permanent! Are you sure you want to delete this post?",
+        "delete":"Delete",
+        "cancel":"Cancel",
+        "views":"Views: {{views}}",
+        "reportPost":"Report post"
+    },
+    "profile":{
+        "password":"Password",
+        "repeatPassword":"Repeat password",
+        "differentPassword":"Repeated password must be the same!",
+        "email":"Email",
+        "registered":"Registered {{date}}",
+        "lastSeen":"Last seen {{date}}",
+        "name":"Name",
+        "lastName":"Last name",
+        "phoneNumber":"Phone number",
+        "city":"City",
+        "comments":"Comments",
+        "addComment":"Add comment",
+        "haveAnAccount":"Already have an account? ",
+        "save":"Save"
+    }
+}

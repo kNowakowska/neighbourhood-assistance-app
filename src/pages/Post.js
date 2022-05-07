@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useConfirm } from "material-ui-confirm";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { styled } from "@mui/material/styles";
 import Container from "@mui/material/Container";
@@ -79,6 +80,7 @@ const StyledPostTitle = styled(Typography)({
 });
 
 const Post = () => {
+  const { t } = useTranslation("core");
   const confirm = useConfirm();
   const navigate = useNavigate();
 
@@ -88,9 +90,10 @@ const Post = () => {
 
   const deletePost = () => {
     confirm({
-      title: "Delete post",
-      description: "This action in permanent! Are you sure you want to delete this post?",
-      confirmationText: "Delete",
+      title: t("post.deletePost"),
+      description: t("post.deletePostConfirmationDesc"),
+      confirmationText: t("post.delete"),
+      cancellationText: t("post.cancel"),
     })
       .then(() => {
         console.log("deleted");
@@ -120,16 +123,12 @@ const Post = () => {
             sx={{ mt: 3 }}
           >{`${post.author.name} ${post.author.last_name}`}</StyledAuthorData>
           <StyledAuthorData variant="h6" align="center" sx={{ mt: 3 }}>{`${post.author.phone_number}`}</StyledAuthorData>
-          <StyledItalicAuthorData
-            variant="body2"
-            align="center"
-            sx={{ mt: 3 }}
-          >{`Registered ${post.author.created.toDateString()}`}</StyledItalicAuthorData>
-          <StyledItalicAuthorData
-            variant="body2"
-            align="center"
-            sx={{ mt: 3 }}
-          >{`Last seen ${post.author.last_active.toDateString()}`}</StyledItalicAuthorData>
+          <StyledItalicAuthorData variant="body2" align="center" sx={{ mt: 3 }}>
+            {t("profile.registered", { date: post.author.created.toDateString() })}
+          </StyledItalicAuthorData>
+          <StyledItalicAuthorData variant="body2" align="center" sx={{ mt: 3 }}>
+            {t("profile.lastSeen", { date: post.author.last_active.toDateString() })}
+          </StyledItalicAuthorData>
           <StyledRating name="read-only" value={post.author.avg_rate} readOnly precision={0.5} sx={{ mt: 3, ml: 4 }} />
         </Grid>
         <Grid item container xs={9}>
@@ -145,15 +144,17 @@ const Post = () => {
                 {post.description}
               </Typography>
               <Grid item container justifyContent="space-between" alignItems="center">
-                <Typography variant="caption" sx={{ fontSize: 14 }}>{`Views: ${post.views}`}</Typography>
+                <Typography variant="caption" sx={{ fontSize: 14 }}>
+                  {t("post.views", { views: post.views })}
+                </Typography>
                 <Box>
-                  <Tooltip title="Delete post">
+                  <Tooltip title={t("post.deletePost")}>
                     <IconButton onClick={deletePost} disabled={false}>
                       {/* nie mozna usunąć nie swojego posta */}
                       <DeleteIcon color="primary" />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Report post">
+                  <Tooltip title={t("post.reportPost")}>
                     <IconButton onClick={reportPost} disabled={false}>
                       {/* nie mozna zgłosić własnego posta */}
                       <FlagIcon />
