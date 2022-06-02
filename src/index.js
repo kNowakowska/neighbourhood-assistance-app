@@ -9,9 +9,10 @@ import { ThemeProvider } from "@emotion/react";
 import theme from "./theme";
 import { ConfirmProvider } from "material-ui-confirm";
 import "./i18n";
+import reducer from "./redux/reducer";
 
 const store = configureStore({
-  reducer: {},
+  reducer: reducer,
 });
 
 const app = (

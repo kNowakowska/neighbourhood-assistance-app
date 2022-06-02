@@ -11,7 +11,7 @@ const themeOptions = {
     },
     background: {
       default: "#122639",
-      //paper: "rgba(71,101,127,0.45)",
+      // paper: "rgba(71,101,127,0.45)",
       paper: "rgb(71,101,127)",
     },
     text: {

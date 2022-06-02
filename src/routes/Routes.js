@@ -7,19 +7,6 @@ import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
 import Post from "../pages/Post";
 import NewPost from "../pages/NewPost";
-import { categories } from "../utils";
-
-export const pages = [
-  {
-    path: "/home",
-    sidebarName_en: "Home",
-    sidebarName_pl: "Główna",
-    icon: "home",
-    children: categories.map((cat) => ({ path: `/home/${cat.id}`, sidebarName_en: cat.name_en, sidebarName_pl: cat.name_pl })),
-  },
-  { path: "/create_post", sidebarName_en: "New post", sidebarName_pl: "Nowy post", icon: "post_add" },
-  { path: "/profile/1", sidebarName_en: "Profile", sidebarName_pl: "Profil", icon: "person" },
-];
 
 export function MyRoutes() {
   return (

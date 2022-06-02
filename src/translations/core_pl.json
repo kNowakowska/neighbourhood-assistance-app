@@ -3,7 +3,10 @@
         "changeLang":"Zmiana języka powiodła się!"
     },
     "errors":{
-        "notFound": "Błąd 404, Strona nie odnaleziona "
+        "notFound": "Błąd 404, Strona nie odnaleziona",
+        "noAuthenticated": "Błąd 401, Nie możemy Cie uwierzytelnić.",
+        "noPermission": "Błąd 403, Nie masz uprawnień do tej operacji.",
+        "serverError": "Błąd 500, Coś poszło nie tak, spróbuj ponownie później."
     },
     "home":{
         "allPosts":"Wszystkie posty",

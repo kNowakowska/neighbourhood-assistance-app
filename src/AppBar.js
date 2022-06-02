@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
 import { styled } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -19,8 +20,6 @@ import LanguageIcon from "@mui/icons-material/Language";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import Avatar from "@mui/material/Avatar";
-
-import { pages } from "./routes/Routes";
 
 const StyledMenuButton = styled(IconButton)({
   color: "#f1e6e6",
@@ -50,12 +49,28 @@ const StyledNavLink = styled(NavLink)({
   color: "#f1e6e6",
 });
 
-const NavigationBar = (props) => {
+const NavigationBar = ({ categories }) => {
   const { i18n, t } = useTranslation("core");
   const location = useLocation();
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+  const pages = [
+    {
+      path: "/home",
+      sidebarName_en: "Home",
+      sidebarName_pl: "Główna",
+      icon: "home",
+      children: categories.map((item) => ({
+        path: `/home/${item.id}`,
+        sidebarName_en: item.nameEng,
+        sidebarName_pl: item.namePl,
+      })),
+    },
+    { path: "/create_post", sidebarName_en: "New post", sidebarName_pl: "Nowy post", icon: "post_add" },
+    { path: "/profile/1", sidebarName_en: "Profile", sidebarName_pl: "Profil", icon: "person" },
+  ];
 
   const toggleDrawer = (open) => (event) => {
     setIsDrawerOpen(open);
@@ -174,4 +189,8 @@ const NavigationBar = (props) => {
   );
 };
 
-export default NavigationBar;
+const mapStateToProps = (state) => ({
+  categories: state.categories,
+});
+
+export default connect(mapStateToProps)(NavigationBar);

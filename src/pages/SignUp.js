@@ -21,6 +21,7 @@ const StyledCardContent = styled(CardContent)({
   transform: "translate(-50%, -50%)",
   padding: "30px 50px",
   textAlign: "center",
+  backgroundColor: "rgba(71,101,127,0.45)",
 });
 
 const StyledTextField = styled(TextField)({

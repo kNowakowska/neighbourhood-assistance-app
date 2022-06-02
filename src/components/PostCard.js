@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
@@ -11,7 +12,6 @@ import CardMedia from "@mui/material/CardMedia";
 import Chip from "@mui/material/Chip";
 
 import no_photo from "../assets/no-photo.png";
-import { categories as categoriesList } from "../utils";
 
 const StyledCard = styled(Card)({
   width: 275,
@@ -27,7 +27,7 @@ const StyledTypography = styled(Typography)({
   width: "50%",
 });
 
-const PostCard = ({ title, created, city, price, currency, photo, id, categories, views }) => {
+const PostCard = ({ title, created, city, price, currency, photo, id, categories, views, categoriesList }) => {
   const { i18n, t } = useTranslation("core");
   const navigate = useNavigate();
 
@@ -50,7 +50,11 @@ const PostCard = ({ title, created, city, price, currency, photo, id, categories
           {categories.map((category) => (
             <Chip
               key={category}
-              label={categoriesList.find((item) => item.id === category)?.[`name_${i18n.language}`]}
+              label={
+                i18n.language === "pl"
+                  ? categoriesList.find((item) => item.id === category)?.namePl
+                  : categoriesList.find((item) => item.id === category)?.nameEng
+              }
               sx={{ mt: 1 }}
             />
           ))}
@@ -63,4 +67,8 @@ const PostCard = ({ title, created, city, price, currency, photo, id, categories
   );
 };
 
-export default PostCard;
+const mapStateToProps = (state) => ({
+  categoriesList: state.categories,
+});
+
+export default connect(mapStateToProps)(PostCard);

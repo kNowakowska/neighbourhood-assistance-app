@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useConfirm } from "material-ui-confirm";
 import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
 import { styled } from "@mui/material/styles";
 import Container from "@mui/material/Container";
@@ -22,13 +23,13 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 
 import withNavBar from "../hoc/WithNavBar";
-import { currencies, categories } from "../utils";
+import { currencies } from "../utils";
 
 const StyledContainer = styled(Grid)({
   marginTop: "100px",
 });
 
-const NewPost = () => {
+const NewPost = ({ categories }) => {
   const { t, i18n } = useTranslation("core");
   const confirm = useConfirm();
   const [title, setTitle] = useState("");
@@ -155,7 +156,14 @@ const NewPost = () => {
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((value) => (
-                      <Chip key={value} label={categories.find((item) => item.id === value)?.[`name_${i18n.language}`]} />
+                      <Chip
+                        key={value}
+                        label={
+                          i18n.language === "pl"
+                            ? categories.find((item) => item.id === value)?.namePl
+                            : categories.find((item) => item.id === value)?.nameEng
+                        }
+                      />
                     ))}
                   </Box>
                 )}
@@ -163,7 +171,7 @@ const NewPost = () => {
                 {categories.map((item) => (
                   <MenuItem key={item.id} value={item.id}>
                     <Checkbox checked={category.includes(item.id)} />
-                    <ListItemText primary={item[`name_${i18n.language}`]} />
+                    <ListItemText primary={i18n.language === "pl" ? item.namePl : item.nameEng} />
                   </MenuItem>
                 ))}
               </Select>
@@ -203,4 +211,8 @@ const NewPost = () => {
   );
 };
 
-export default withNavBar(NewPost);
+const mapStateToProps = (state) => ({
+  categoriesList: state.categories,
+});
+
+export default connect(mapStateToProps)(withNavBar(NewPost));

@@ -3,7 +3,10 @@
         "changeLang":"Changing language succeeded!"
     },
     "errors":{
-        "notFound": "404 error, Page not Found "
+        "notFound": "404 error, Page not Found",
+        "noAuthenticated": "401 error, We're not able to authenticate you.",
+        "noPermission": "403 error, You don't have permission for this action.",
+        "serverError": "500 error, Something went wrong, try again later."
     },
     "home":{
         "allPosts":"All posts",

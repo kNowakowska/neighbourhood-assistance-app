@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -18,9 +19,9 @@ import Chip from "@mui/material/Chip";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 
-import { categories, currencies } from "../utils";
+import { currencies } from "../utils";
 
-export default function FiltersModal({ open, onClose, cities, applyFilters, filters }) {
+function FiltersModal({ open, onClose, cities, applyFilters, filters, categories }) {
   const { t, i18n } = useTranslation("core");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -118,7 +119,14 @@ export default function FiltersModal({ open, onClose, cities, applyFilters, filt
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((value) => (
-                      <Chip key={value} label={categories.find((item) => item.id === value)?.[`name_${i18n.language}`] || ""} />
+                      <Chip
+                        key={value}
+                        label={
+                          i18n.language === "pl"
+                            ? categories.find((item) => item.id === value)?.namePl
+                            : categories.find((item) => item.id === value)?.nameEng
+                        }
+                      />
                     ))}
                   </Box>
                 )}
@@ -127,7 +135,7 @@ export default function FiltersModal({ open, onClose, cities, applyFilters, filt
                 {categories.map((cat) => (
                   <MenuItem key={cat.id} value={cat.id}>
                     <Checkbox checked={selectedCategories.includes(cat.id)} />
-                    <ListItemText primary={cat[`name_${i18n.language}`]} />
+                    <ListItemText primary={i18n.language === "pl" ? cat.namePl : cat.nameEng} />
                   </MenuItem>
                 ))}
               </Select>
@@ -182,3 +190,9 @@ export default function FiltersModal({ open, onClose, cities, applyFilters, filt
     </Dialog>
   );
 }
+
+const mapStateToProps = (state) => ({
+  categories: state.categories,
+});
+
+export default connect(mapStateToProps)(FiltersModal);
