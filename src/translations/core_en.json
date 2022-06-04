@@ -37,7 +37,8 @@
         "password":"password",
         "noAccount":"Don't have an account? ",
         "signUp":"Sign up",
-        "signIn":"Sign in"
+        "signIn":"Sign in",
+        "emailOrPasswordIncorrect":"Email or login incorrect!"
     },
     "newPost":{
         "createPost":"Create post",
@@ -60,7 +61,8 @@
         "delete":"Delete",
         "cancel":"Cancel",
         "views":"Views: {{views}}",
-        "reportPost":"Report post"
+        "reportPost":"Report post",
+        "reported":"Post reported: {{count}}"
     },
     "profile":{
         "password":"Password",
@@ -76,6 +78,8 @@
         "comments":"Comments",
         "addComment":"Add comment",
         "haveAnAccount":"Already have an account? ",
-        "save":"Save"
+        "save":"Save",
+        "userExists":"User with given email already exists!",
+        "deleteUser":"Delete user"
     }
 }

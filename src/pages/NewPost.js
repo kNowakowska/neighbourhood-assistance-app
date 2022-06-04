@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useConfirm } from "material-ui-confirm";
 import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { styled } from "@mui/material/styles";
 import Container from "@mui/material/Container";
@@ -24,20 +25,30 @@ import FormControl from "@mui/material/FormControl";
 
 import withNavBar from "../hoc/WithNavBar";
 import { currencies } from "../utils";
+import { createPost } from "../redux/actions/posts";
+import { getCategories } from "../redux/actions/categories";
 
 const StyledContainer = styled(Grid)({
   marginTop: "100px",
 });
 
-const NewPost = ({ categories }) => {
+const NewPost = ({ categories, createPost, loggedUser, getCategories }) => {
   const { t, i18n } = useTranslation("core");
   const confirm = useConfirm();
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(0);
   const [currency, setCurrency] = useState(currencies[0]);
   const [photo, setPhoto] = useState(null);
   const [category, setCategory] = useState([]);
+
+  useEffect(() => {
+    if (!categories.length) {
+      getCategories();
+    }
+  }, []);
 
   const handleChangeTitle = (e) => {
     setTitle(e.target.value);
@@ -68,13 +79,22 @@ const NewPost = ({ categories }) => {
       description: t("newPost.createConfirmationDesc"),
       confirmationText: t("newPost.create"),
       cancellationText: t("newPost.cancel"),
-    })
-      .then(() => {
-        console.log("created");
-      })
-      .catch(() => {
-        console.log("cancelled");
+    }).then(() => {
+      const post = {
+        title,
+        description,
+        price: +price,
+        currency: currency.curr,
+        photoUrl: "",
+        city: loggedUser.city,
+        authorId: loggedUser.id,
+        categories: category.map((selected) => categories.find((item) => item.id === selected)?.id),
+        created: new Date(),
+      };
+      createPost(post, (responseData) => {
+        navigate(`/posts/${responseData.id}`);
       });
+    });
   };
 
   const uploadPhoto = (e) => {
@@ -211,8 +231,13 @@ const NewPost = ({ categories }) => {
   );
 };
 
+const mapDispatchToProps = {
+  createPost,
+  getCategories,
+};
 const mapStateToProps = (state) => ({
-  categoriesList: state.categories,
+  categories: state.categories,
+  loggedUser: state.system,
 });
 
-export default connect(mapStateToProps)(withNavBar(NewPost));
+export default connect(mapStateToProps, mapDispatchToProps)(withNavBar(NewPost));

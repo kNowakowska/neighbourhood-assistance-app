@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import ScheduleSelector from "react-schedule-selector";
 import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
+import usePrevious from "../hooks/usePrevious";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -16,54 +19,13 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Tooltip from "@mui/material/Tooltip";
 import Rating from "@mui/material/Rating";
 import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button";
 
 import withNavBar from "../hoc/WithNavBar";
 import Comment from "../components/Comment";
 import CommentInput from "../components/CommentInput";
 import theme from "../theme";
-
-const initialUser = {
-  name: "Jane",
-  last_name: "Smith",
-  photo: null,
-  created: new Date(),
-  phone_number: "511234098",
-  last_active: new Date(),
-  avg_rate: 3.6,
-  availability: {
-    Mon: ["07", "08", "09", "10"],
-    Tue: ["12", "14", "13"],
-    Wed: [],
-    Thu: ["07", "08"],
-    Fri: ["11", "12", "13", "14"],
-    Sat: [],
-    Sun: [],
-  },
-  comments: [
-    {
-      comment:
-        "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-      created: new Date(),
-      author: {
-        name: "John",
-        last_name: "Smith",
-      },
-      rate: 3.5,
-      id: 1,
-    },
-    {
-      comment:
-        "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-      created: new Date(),
-      author: {
-        name: "Harry",
-        last_name: "Potter",
-      },
-      rate: 5.0,
-      id: 2,
-    },
-  ],
-};
+import { updateUser, createComment, getUsers, deleteUser } from "../redux/actions/users";
 
 const StyledContainer = styled(Grid)({
   marginTop: "100px",
@@ -118,48 +80,85 @@ const StyledCommentsSection = styled(Box)({
   justifyContent: "center",
 });
 
-const Profile = () => {
+const Profile = ({ users, getUsers, updateUser, createComment, loggedUser, deleteUser }) => {
   const { t } = useTranslation("core");
+  const params = useParams();
+  const navigate = useNavigate();
   const [editMode, setEditMode] = useState({ name: false, lastName: false, phoneNumber: false, city: false });
   const [addCommentMode, setAddCommentMode] = useState(false);
-  const [user, setUser] = useState(initialUser);
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [city, setCity] = useState("");
+  const [phone, setPhone] = useState("");
+  const [photo, setPhoto] = useState("");
+  const [comments, setComments] = useState([]);
+  const [user, setUser] = useState(null);
   const [schedule, setSchedule] = useState([]);
+  const [formattedSchedule, setFormattedSchedule] = useState({});
+
+  const prevFormattedSchedule = usePrevious(formattedSchedule);
 
   useEffect(() => {
-    const formattedSchedule = user.availability;
-    parseSchedule(formattedSchedule);
-  }, [user]);
+    if (!users.length) {
+      getUsers();
+    }
+  }, []);
 
-  const parseSchedule = (formattedSchedule) => {
+  useEffect(() => {
+    let user = null;
+    if (+params.id === loggedUser.id) {
+      user = { ...loggedUser };
+    } else {
+      user = users.find((user) => user.id === +params.id);
+    }
+    setUser(user);
+    setName(user.name);
+    setLastName(user.lastName);
+    setCity(user.city);
+    setPhone(user.phoneNumber);
+    setPhoto(user.photoUrl);
+    setComments(user.comments || []);
+
+    const formatted = user.availability;
+    parseSchedule(formatted);
+  }, [params]);
+
+  useEffect(() => {
+    if (Object.keys(formattedSchedule).length && JSON.stringify(prevFormattedSchedule) !== JSON.stringify(formattedSchedule))
+      updateUser({ ...user, availability: { ...formattedSchedule } });
+  }, [formattedSchedule]);
+
+  const parseSchedule = (formatted) => {
     const newSchedule = [];
-    Object.entries(formattedSchedule).forEach(([weekDay, hours]) => {
-      switch (weekDay) {
-        case "Mon":
-          addDateWithHours(newSchedule, hours);
-          break;
-        case "Tue":
-          addDateWithHours(newSchedule, hours, 1);
-          break;
-        case "Wed":
-          addDateWithHours(newSchedule, hours, 2);
-          break;
-        case "Thu":
-          addDateWithHours(newSchedule, hours, 3);
-          break;
-        case "Fri":
-          addDateWithHours(newSchedule, hours, 4);
-          break;
-        case "Sat":
-          addDateWithHours(newSchedule, hours, 5);
-          break;
-        case "Sun":
-          addDateWithHours(newSchedule, hours, 6);
-          break;
-        default:
-          break;
-      }
-      setSchedule(newSchedule);
-    });
+    if (formatted)
+      Object.entries(formatted).forEach(([weekDay, hours]) => {
+        switch (weekDay) {
+          case "Mon":
+            addDateWithHours(newSchedule, hours);
+            break;
+          case "Tue":
+            addDateWithHours(newSchedule, hours, 1);
+            break;
+          case "Wed":
+            addDateWithHours(newSchedule, hours, 2);
+            break;
+          case "Thu":
+            addDateWithHours(newSchedule, hours, 3);
+            break;
+          case "Fri":
+            addDateWithHours(newSchedule, hours, 4);
+            break;
+          case "Sat":
+            addDateWithHours(newSchedule, hours, 5);
+            break;
+          case "Sun":
+            addDateWithHours(newSchedule, hours, 6);
+            break;
+          default:
+            break;
+        }
+        setSchedule(newSchedule);
+      });
   };
 
   const addDateWithHours = (newSchedule, hours, distanceFromMonday = 0) => {
@@ -176,10 +175,49 @@ const Profile = () => {
   };
 
   const handleChangeUser = (e, property) => {
-    setUser((user) => ({ ...user, [property]: e.target.value }));
+    switch (property) {
+      case "name":
+        setName(e.target.value);
+        break;
+      case "lastName":
+        setLastName(e.target.value);
+        break;
+      case "city":
+        setCity(e.target.value);
+        break;
+      case "phoneNumber":
+        setPhone(e.target.value);
+        break;
+      default:
+    }
   };
 
   const changeMode = (parameter) => {
+    if (Object.values(editMode).includes(true)) {
+      switch (parameter) {
+        case "name":
+          updateUser({ ...user, name: name }, (responseData) => {
+            setUser(responseData);
+          });
+          break;
+        case "lastName":
+          updateUser({ ...user, lastName: lastName }, (responseData) => {
+            setUser(responseData);
+          });
+          break;
+        case "city":
+          updateUser({ ...user, city: city }, (responseData) => {
+            setUser(responseData);
+          });
+          break;
+        case "phoneNumber":
+          updateUser({ ...user, phoneNumber: phone }, (responseData) => {
+            setUser(responseData);
+          });
+          break;
+        default:
+      }
+    }
     setEditMode((editMode) => ({
       ...Object.entries(Object.keys(editMode).map((key) => [key, false])),
       [parameter]: !editMode[parameter],
@@ -187,6 +225,9 @@ const Profile = () => {
   };
 
   const saveComment = (comment) => {
+    createComment({ ...comment, authorId: loggedUser.id }, user.id, (responseData) => {
+      setComments(responseData.comments);
+    });
     setAddCommentMode((addCommentMode) => !addCommentMode);
   };
 
@@ -194,7 +235,7 @@ const Profile = () => {
     setSchedule(dates);
     const weekDayFormat = new Intl.DateTimeFormat("en-GB", { weekday: "short" });
     const hourFormat = new Intl.DateTimeFormat("en-GB", { hour: "numeric" });
-    const formattedSchedule = {
+    const formatted = {
       Mon: [],
       Tue: [],
       Wed: [],
@@ -205,8 +246,15 @@ const Profile = () => {
     };
     dates.forEach((date) => {
       const weekDay = weekDayFormat.format(date);
-      const hour = hourFormat.format(date);
-      formattedSchedule[weekDay].push(hour);
+      const hour = +hourFormat.format(date);
+      formatted[weekDay].push(hour);
+    });
+    setFormattedSchedule(formatted);
+  };
+
+  const handleDeleteUser = () => {
+    deleteUser(loggedUser.id, () => {
+      navigate("/");
     });
   };
 
@@ -217,19 +265,24 @@ const Profile = () => {
       <CssBaseline />
       <StyledContainer container>
         <Grid item xs={3}>
-          <StyledAvatar alt={`${user.name} ${user.last_name} avatar`} src={user.photo} />
+          <StyledAvatar alt={`${name} ${lastName} avatar`} src={photo} />
           <StyledItalicAuthorData variant="body2" align="center" sx={{ mt: 3 }}>
-            {t("profile.registered", { date: user.created.toDateString() })}
+            {t("profile.registered", { date: user?.created })}
           </StyledItalicAuthorData>
           <StyledItalicAuthorData variant="body2" align="center" sx={{ mt: 3 }}>
-            {t("profile.lastSeen", { date: user.last_active.toDateString() })}
+            {t("profile.lastSeen", { date: user?.lastActive ? new Date(user.lastActive).toDateString() : "" })}
           </StyledItalicAuthorData>
-          <StyledRating name="read-only" value={user.avg_rate} readOnly precision={0.5} sx={{ mt: 3, ml: 4 }} />
+          <StyledRating name="read-only" value={user?.averageRate || 0} readOnly precision={0.5} sx={{ mt: 3, ml: 4 }} />
+          {loggedUser.id === user?.id && (
+            <Button onClick={handleDeleteUser} variant="contained" color="primary" sx={{ mt: 3, ml: -6 }}>
+              {t("profile.deleteUser")}
+            </Button>
+          )}
         </Grid>
         <Grid item container xs={9}>
           <StyledBox>
             <StyledTextField
-              value={user.name}
+              value={name}
               label={t("profile.name")}
               onChange={(e) => handleChangeUser(e, "name")}
               fullWidth
@@ -237,13 +290,15 @@ const Profile = () => {
               variant="outlined"
               error={false}
             />
-            <StyledEditIcon onClick={() => changeMode("name")}>
-              <ModeEditIcon />
-            </StyledEditIcon>
+            {user && loggedUser.id === user?.id && (
+              <StyledEditIcon onClick={() => changeMode("name")}>
+                <ModeEditIcon />
+              </StyledEditIcon>
+            )}
           </StyledBox>
           <StyledBox>
             <StyledTextField
-              value={user.last_name}
+              value={lastName}
               label={t("profile.lastName")}
               onChange={(e) => handleChangeUser(e, "lastName")}
               fullWidth
@@ -251,13 +306,15 @@ const Profile = () => {
               variant="outlined"
               error={false}
             />
-            <StyledEditIcon onClick={() => changeMode("lastName")}>
-              <ModeEditIcon />
-            </StyledEditIcon>
+            {user && loggedUser.id === user?.id && (
+              <StyledEditIcon onClick={() => changeMode("lastName")}>
+                <ModeEditIcon />
+              </StyledEditIcon>
+            )}
           </StyledBox>
           <StyledBox>
             <StyledTextField
-              value={user.phone_number}
+              value={phone}
               label={t("profile.phoneNumber")}
               type="tel"
               onChange={(e) => handleChangeUser(e, "phoneNumber")}
@@ -266,13 +323,15 @@ const Profile = () => {
               variant="outlined"
               error={false}
             />
-            <StyledEditIcon onClick={() => changeMode("phoneNumber")}>
-              <ModeEditIcon />
-            </StyledEditIcon>
+            {user && loggedUser.id === user?.id && (
+              <StyledEditIcon onClick={() => changeMode("phoneNumber")}>
+                <ModeEditIcon />
+              </StyledEditIcon>
+            )}
           </StyledBox>
           <StyledBox>
             <StyledTextField
-              value={user.city}
+              value={city}
               label={t("profile.city")}
               type="city"
               onChange={(e) => handleChangeUser(e, "city")}
@@ -281,14 +340,17 @@ const Profile = () => {
               variant="outlined"
               error={false}
             />
-            <StyledEditIcon onClick={() => changeMode("city")}>
-              <ModeEditIcon />
-            </StyledEditIcon>
+            {user && loggedUser.id === user?.id && (
+              <StyledEditIcon onClick={() => changeMode("city")}>
+                <ModeEditIcon />
+              </StyledEditIcon>
+            )}
           </StyledBox>
 
           <StyledDivider />
 
           <ScheduleSelector
+            startDate={getPreviousMonday()}
             selection={schedule}
             numDays={7}
             minTime={7}
@@ -299,25 +361,26 @@ const Profile = () => {
             selectedColor={theme.palette.secondary.main}
             hoveredColor={theme.palette.primary.main}
           />
-
           <StyledDivider />
 
           <StyledCommentsSectionTitle variant="caption" align="left" sx={{ mt: 1 }}>
             {t("profile.comments")}
           </StyledCommentsSectionTitle>
-          {addCommentMode ? (
-            <CommentInput onSave={saveComment} />
-          ) : (
-            <StyledCommentsSection sx={{ mb: 2 }}>
-              <Tooltip title={t("profile.addComment")} placement="right">
-                <IconButton onClick={() => setAddCommentMode(!addCommentMode)}>
-                  <AddCircleIcon />
-                </IconButton>
-              </Tooltip>
-            </StyledCommentsSection>
-          )}
-          {user.comments.map((comment) => (
-            <Comment key={comment.id} {...comment} />
+          {user && loggedUser.id !== user?.id ? (
+            addCommentMode ? (
+              <CommentInput onSave={saveComment} />
+            ) : (
+              <StyledCommentsSection sx={{ mb: 2 }}>
+                <Tooltip title={t("profile.addComment")} placement="right">
+                  <IconButton onClick={() => setAddCommentMode(!addCommentMode)}>
+                    <AddCircleIcon />
+                  </IconButton>
+                </Tooltip>
+              </StyledCommentsSection>
+            )
+          ) : null}
+          {comments.map((comment) => (
+            <Comment key={comment.id} author={users.find((user) => user.id === comment.authorId)} {...comment} />
           ))}
         </Grid>
       </StyledContainer>
@@ -325,4 +388,17 @@ const Profile = () => {
   );
 };
 
-export default withNavBar(Profile);
+const mapDispatchToProps = {
+  updateUser,
+  createComment,
+  getUsers,
+  deleteUser,
+};
+const mapStateToProps = (state) => ({
+  categories: state.categories,
+  loggedUser: state.system,
+  posts: state.posts,
+  users: state.users,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withNavBar(Profile));

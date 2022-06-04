@@ -21,14 +21,14 @@ const StyledComment = styled(Typography)({
   fontStyle: "italic",
 });
 
-const Comment = ({ comment, created, author, rate }) => {
+const Comment = ({ comment, created, rate, author }) => {
   return (
     <StyledCard sx={{ mb: 2, mt: 2 }}>
       <StyledBox sx={{ p: 2 }}>
-        <Typography>{`${author.name} ${author.last_name} - ${created.toDateString()}`}</Typography>
-        <Rating name="read-only" value={rate} readOnly precision={0.5} />
+        <Typography>{`${author.name} ${author.lastName} - ${created ? new Date(created).toDateString() : ""}`}</Typography>
+        <Rating name="read-only" value={rate || 0} readOnly precision={0.5} />
       </StyledBox>
-      <StyledComment sx={{ mr: "auto", ml: "auto", mt: 2, mb: 2 }}>{comment}</StyledComment>
+      <StyledComment sx={{ mr: "auto", ml: "auto", mt: 2, mb: 2 }}>{comment || ""}</StyledComment>
     </StyledCard>
   );
 };

@@ -44,21 +44,23 @@ export const waxios = {
         const message = `${name}: ${getErrorMessage(err)}`;
         new Toast({ message, type: "danger" });
       }),
-  post: (name, url, data, handleThen = () => null, handleCatch = () => null) =>
+  post: (name, url, data, handleThen = () => null, handleCatch = () => null, withoutToast = false) =>
     axios
-      .get(SERVER + url, data, { headers: { ...headers } })
+      .post(SERVER + url, data, { headers: { ...headers } })
       .then((response) => {
         handleThen(response.data);
         return response.data;
       })
       .catch((err) => {
         handleCatch(err);
-        const message = `${name}: ${getErrorMessage(err)}`;
-        new Toast({ message, type: "danger" });
+        if (!withoutToast) {
+          const message = `${name}: ${getErrorMessage(err)}`;
+          new Toast({ message, type: "danger" });
+        }
       }),
   put: (name, url, data, handleThen = () => null, handleCatch = () => null) =>
     axios
-      .get(SERVER + url, data, { headers: { ...headers } })
+      .put(SERVER + url, data, { headers: { ...headers } })
       .then((response) => {
         handleThen(response.data);
         return response.data;
@@ -70,7 +72,7 @@ export const waxios = {
       }),
   delete: (name, url, handleThen = () => null, handleCatch = () => null) =>
     axios
-      .get(SERVER + url, { headers: { ...headers } })
+      .delete(SERVER + url, { headers: { ...headers } })
       .then((response) => {
         handleThen(response.data);
         return response.data;

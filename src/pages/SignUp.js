@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,6 +15,7 @@ import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 
 import logo_small from "../assets/logo_small.png";
+import { createUser } from "../redux/actions/users";
 
 const StyledCardContent = styled(CardContent)({
   position: "absolute",
@@ -39,8 +42,10 @@ const StyledLink = styled(Link)({
   textDecoration: "none",
 });
 
-const SignUp = () => {
+const SignUp = ({ createUser }) => {
   const { t } = useTranslation("core");
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -48,6 +53,7 @@ const SignUp = () => {
   const [repeatedPassword, setRepeatedPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [city, setCity] = useState("");
+  const [error, setError] = useState(false);
 
   const ifAnyEmptyField = !name || !lastName || !email || !password || !repeatedPassword || !phoneNumber || !city;
 
@@ -61,6 +67,7 @@ const SignUp = () => {
 
   const handleChangeEmail = (e) => {
     setEmail(e.target.value);
+    setError(false);
   };
 
   const handleChangePassword = (e) => {
@@ -80,7 +87,24 @@ const SignUp = () => {
   };
 
   const signUp = () => {
-    //sending request to server
+    const user = {
+      name,
+      lastName,
+      username: email,
+      password,
+      phoneNumber,
+      city,
+      created: new Date(),
+    };
+    createUser(
+      user,
+      () => {
+        navigate("/home");
+      },
+      () => {
+        setError(true);
+      }
+    );
   };
 
   return (
@@ -121,7 +145,8 @@ const SignUp = () => {
             fullWidth
             required
             variant="outlined"
-            error={false}
+            error={error}
+            helperText={error ? t("profile.userExists") : ""}
           />
           <StyledTextField
             value={password}
@@ -184,4 +209,8 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+const mapDispatchToProps = {
+  createUser,
+};
+
+export default connect(null, mapDispatchToProps)(SignUp);

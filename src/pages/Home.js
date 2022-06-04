@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,149 +19,8 @@ import PostCard from "../components/PostCard";
 import withNavBar from "../hoc/WithNavBar";
 import { postsSortOptions, currencies } from "../utils";
 import FiltersModal from "../components/FiltersModal";
-
-const initialPosts = [
-  {
-    id: 1,
-    title: "Układam płytki",
-    created: new Date(),
-    city: "Kielce",
-    price: 100,
-    currency: "PLN",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
-    photo: null,
-    views: 50,
-    categories: [3],
-    author: {
-      name: "John",
-      last_name: "Smith",
-      id: 1,
-      phone_number: "123456123",
-      photo: null,
-    },
-  },
-  {
-    id: 2,
-    title: "Układam płytki",
-    created: new Date(),
-    city: "Kielce",
-    price: 100,
-    currency: "PLN",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
-    photo: null,
-    views: 50,
-    categories: [1, 2, 3],
-    author: {
-      name: "John",
-      last_name: "Smith",
-      id: 1,
-      phone_number: "123456123",
-      photo: null,
-    },
-  },
-  {
-    id: 3,
-    title: "Układam płytki",
-    created: new Date(),
-    city: "Kielce",
-    price: 100,
-    currency: "PLN",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
-    photo: null,
-    views: 50,
-    categories: [2],
-    author: {
-      name: "John",
-      last_name: "Smith",
-      id: 1,
-      phone_number: "123456123",
-      photo: null,
-    },
-  },
-  {
-    id: 4,
-    title: "Układam płytki",
-    created: new Date(2021, 11, 5),
-    city: "Kielce",
-    price: 100,
-    currency: "PLN",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
-    photo: null,
-    views: 150,
-    categories: [1],
-    author: {
-      name: "John",
-      last_name: "Smith",
-      id: 2,
-      phone_number: "123456123",
-      photo: null,
-    },
-  },
-  {
-    id: 5,
-    title: "Układam panele",
-    created: new Date(),
-    city: "Kielce",
-    price: 200,
-    currency: "PLN",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
-    photo: null,
-    views: 50,
-    categories: [3],
-    author: {
-      name: "John",
-      last_name: "Smith",
-      id: 2,
-      phone_number: "123456123",
-      photo: null,
-    },
-  },
-  {
-    id: 6,
-    title: "Układam płytki",
-    created: new Date(),
-    city: "Warszawa",
-    price: 200,
-    currency: "EUR",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
-    photo: null,
-    views: 50,
-    categories: [2, 3],
-    author: {
-      name: "John",
-      last_name: "Smith",
-      id: 2,
-      phone_number: "123456123",
-      photo: null,
-    },
-  },
-  {
-    id: 7,
-    title: "Układam płytki",
-    created: new Date(),
-    city: "Warszawa",
-    price: 100,
-    currency: "PLN",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet nobis velit quas voluptatibus cupiditate, odit iure et minus aliquam at!",
-    photo: null,
-    views: 50,
-    categories: [1, 2],
-    author: {
-      name: "John",
-      last_name: "Smith",
-      id: 1,
-      phone_number: "123456123",
-      photo: null,
-    },
-  },
-];
+import { getPosts } from "../redux/actions/posts";
+import { getUsers } from "../redux/actions/users";
 
 const StyledContainer = styled(Grid)({
   marginTop: "100px",
@@ -176,7 +36,7 @@ const StyledTextField = styled(TextField)({
   width: 250,
 });
 
-function Home() {
+function Home({ initialPosts, getPosts, getUsers }) {
   const { t } = useTranslation("core");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
@@ -189,18 +49,20 @@ function Home() {
   let params = useParams();
 
   useEffect(() => {
-    let defaultPosts = [...initialPosts];
+    getPosts((responseData) => {
+      setInitialPosts(responseData);
+    });
+    getUsers();
+  }, []);
 
-    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === userId);
-
-    if (params?.category) {
-      setPosts(defaultPosts.filter((post) => post.categories.includes(+params.category)));
+  useEffect(() => {
+    if (initialPosts.length) {
+      getPosts((responseData) => {
+        setInitialPosts(responseData);
+      });
     } else {
-      setPosts(defaultPosts);
+      setInitialPosts(initialPosts);
     }
-    setSearch("");
-    setSort("");
-    setFilters(null);
   }, [params]);
 
   const showMyPosts = () => {
@@ -210,6 +72,21 @@ function Home() {
     if (!myPostsMode) setPosts(defaultPosts.filter((post) => post.author.id === userId));
     else setPosts(defaultPosts);
     setMyPostsMode((prevState) => !prevState);
+    setSearch("");
+    setSort("");
+    setFilters(null);
+  };
+
+  const setInitialPosts = (initPosts) => {
+    let defaultPosts = [...initPosts];
+
+    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === userId);
+
+    if (params?.category) {
+      setPosts(defaultPosts.filter((post) => post.categories.includes(+params.category)));
+    } else {
+      setPosts(defaultPosts);
+    }
     setSearch("");
     setSort("");
     setFilters(null);
@@ -439,4 +316,13 @@ function Home() {
   );
 }
 
-export default withNavBar(Home);
+const mapDispatchToProps = {
+  getPosts,
+  getUsers,
+};
+
+const mapStateToProps = (state) => ({
+  initialPosts: state.posts,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withNavBar(Home));

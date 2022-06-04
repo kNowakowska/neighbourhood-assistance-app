@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,6 +15,7 @@ import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 
 import logo_small from "../assets/logo_small.png";
+import { signIn } from "../redux/actions/system";
 
 const StyledCardContent = styled(CardContent)({
   position: "absolute",
@@ -41,23 +43,34 @@ const StyledLink = styled(Link)({
   textDecoration: "none",
 });
 
-const Login = () => {
+const Login = ({ signIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation("core");
 
   const handleChangeEmail = (e) => {
+    setError(false);
     setEmail(e.target.value);
   };
 
   const handleChangePassword = (e) => {
+    setError(false);
     setPassword(e.target.value);
   };
 
   const login = () => {
-    //sending request to server
-    navigate("/home");
+    signIn(
+      email,
+      password,
+      () => {
+        navigate("/home");
+      },
+      () => {
+        setError(true);
+      }
+    );
   };
 
   return (
@@ -74,7 +87,7 @@ const Login = () => {
             fullWidth
             required
             variant="outlined"
-            error={false}
+            error={error}
           />
           <StyledTextField
             value={password}
@@ -84,7 +97,8 @@ const Login = () => {
             fullWidth
             required
             variant="outlined"
-            error={false}
+            error={error}
+            helperText={error ? t("login.emailOrPasswordIncorrect") : ""}
           />
           <Grid container justifyContent="space-between">
             <Grid item>
@@ -101,4 +115,8 @@ const Login = () => {
   );
 };
 
-export default Login;
+const mapDispatchToProps = {
+  signIn,
+};
+
+export default connect(null, mapDispatchToProps)(Login);

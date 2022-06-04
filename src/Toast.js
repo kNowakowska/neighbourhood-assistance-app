@@ -1,4 +1,5 @@
 "use strict";
+import "./Toast.css";
 
 export default function Toast(options) {
   if (!options.message) {
@@ -32,6 +33,10 @@ Toast.prototype._createElements = function () {
     setTimeout(function () {
       return resolve();
     }, 500);
+
+    setTimeout(() => {
+      _this._close();
+    }, 5000);
   });
 };
 

@@ -10,9 +10,6 @@ import axios from "axios";
 function App({ getCategories }) {
   useEffect(() => {
     getCategories();
-    axios.get("http://localhost:8818/category/").then((response) => {
-      console.log(response);
-    });
   }, [getCategories]);
 
   return (

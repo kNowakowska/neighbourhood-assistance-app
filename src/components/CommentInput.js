@@ -31,11 +31,15 @@ const CommentInput = ({ onSave }) => {
     setRate(newValue);
   };
 
+  const handleSave = () => {
+    onSave({ rate, comment });
+  };
+
   return (
     <StyledCard sx={{ mb: 2, mt: 2, p: 3 }}>
       <StyledTextField value={comment} onChange={handleChangeComment} multiline />
       <Rating name="read-only" value={rate} onChange={handleChangeRate} precision={0.5} />
-      <Button variant="contained" color="secondary" disabled={!comment} onClick={onSave}>
+      <Button variant="contained" color="secondary" disabled={!comment} onClick={handleSave}>
         {t("profile.save")}
       </Button>
     </StyledCard>

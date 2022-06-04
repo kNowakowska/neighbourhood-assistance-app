@@ -27,7 +27,7 @@ const StyledTypography = styled(Typography)({
   width: "50%",
 });
 
-const PostCard = ({ title, created, city, price, currency, photo, id, categories, views, categoriesList }) => {
+const PostCard = ({ title, created, city, price, currency, photo, id, categories = [], reportCount, categoriesList }) => {
   const { i18n, t } = useTranslation("core");
   const navigate = useNavigate();
 
@@ -43,24 +43,26 @@ const PostCard = ({ title, created, city, price, currency, photo, id, categories
           {title}
         </Typography>
         <Grid container alignItems="center" justifyContent="space-between">
-          <StyledTypography variant="caption">{`${created.toDateString()}, ${city}`}</StyledTypography>
+          <StyledTypography variant="caption">{`${created ? new Date(created).toDateString() : ""}, ${
+            city || ""
+          }`}</StyledTypography>
           <StyledTypography variant="body1">{`${price} ${currency}`}</StyledTypography>
         </Grid>
         <Grid container alignItems="center" justifyContent="space-around" sx={{ mt: 2, mb: 2 }}>
           {categories.map((category) => (
             <Chip
-              key={category}
+              key={`${id}_${category.id}`}
               label={
                 i18n.language === "pl"
-                  ? categoriesList.find((item) => item.id === category)?.namePl
-                  : categoriesList.find((item) => item.id === category)?.nameEng
+                  ? categoriesList.find((item) => item.id === category.id)?.namePl
+                  : categoriesList.find((item) => item.id === category.id)?.nameEng
               }
               sx={{ mt: 1 }}
             />
           ))}
         </Grid>
         <Grid container alignItems="center" justifyContent="center">
-          <StyledTypography variant="caption">{t("post.views", { views: views })}</StyledTypography>
+          <StyledTypography variant="caption">{t("post.reported", { count: reportCount })}</StyledTypography>
         </Grid>
       </StyledCardContent>
     </StyledCard>

@@ -21,6 +21,8 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import Avatar from "@mui/material/Avatar";
 
+import { logout } from "./redux/actions/system";
+
 const StyledMenuButton = styled(IconButton)({
   color: "#f1e6e6",
 });
@@ -49,7 +51,7 @@ const StyledNavLink = styled(NavLink)({
   color: "#f1e6e6",
 });
 
-const NavigationBar = ({ categories }) => {
+const NavigationBar = ({ categories, loggedUser, logout }) => {
   const { i18n, t } = useTranslation("core");
   const location = useLocation();
   const navigate = useNavigate();
@@ -69,7 +71,7 @@ const NavigationBar = ({ categories }) => {
       })),
     },
     { path: "/create_post", sidebarName_en: "New post", sidebarName_pl: "Nowy post", icon: "post_add" },
-    { path: "/profile/1", sidebarName_en: "Profile", sidebarName_pl: "Profil", icon: "person" },
+    { path: `/profile/${loggedUser.id}`, sidebarName_en: "Profile", sidebarName_pl: "Profil", icon: "person" },
   ];
 
   const toggleDrawer = (open) => (event) => {
@@ -80,13 +82,13 @@ const NavigationBar = ({ categories }) => {
     return location.pathname === routeName;
   };
 
-  const logout = () => {
-    //usunięcię danych o zalogowanym użytkowniku
+  const logoutUser = () => {
+    logout();
     navigate("/");
   };
 
   const openProfile = () => {
-    navigate("/profile/1");
+    navigate(`/profile/${loggedUser.id}`);
   };
 
   const closeAlert = () => {
@@ -169,7 +171,7 @@ const NavigationBar = ({ categories }) => {
             <IconButton onClick={openProfile} sx={{ marginLeft: 1 }}>
               <Avatar />
             </IconButton>
-            <IconButton onClick={logout} sx={{ marginLeft: 1 }}>
+            <IconButton onClick={logoutUser} sx={{ marginLeft: 1 }}>
               <LogoutIcon />
             </IconButton>
           </Toolbar>
@@ -191,6 +193,11 @@ const NavigationBar = ({ categories }) => {
 
 const mapStateToProps = (state) => ({
   categories: state.categories,
+  loggedUser: state.system,
 });
 
-export default connect(mapStateToProps)(NavigationBar);
+const mapDispatchToProps = {
+  logout,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavigationBar);
