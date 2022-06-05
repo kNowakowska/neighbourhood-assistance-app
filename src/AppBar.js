@@ -20,6 +20,7 @@ import LanguageIcon from "@mui/icons-material/Language";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
 
 import { logout } from "./redux/actions/system";
 
@@ -165,15 +166,21 @@ const NavigationBar = ({ categories, loggedUser, logout }) => {
               <MenuIcon />
             </StyledMenuButton>
             <StyledAppTitle variant="h6">Neighbourhood Assistance</StyledAppTitle>
-            <IconButton onClick={changeLanguage}>
-              <LanguageIcon />
-            </IconButton>
-            <IconButton onClick={openProfile} sx={{ marginLeft: 1 }}>
-              <Avatar />
-            </IconButton>
-            <IconButton onClick={logoutUser} sx={{ marginLeft: 1 }}>
-              <LogoutIcon />
-            </IconButton>
+            <Tooltip title={t("home.changeLanguage")}>
+              <IconButton onClick={changeLanguage}>
+                <LanguageIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={`${loggedUser.name} ${loggedUser.lastName}`}>
+              <IconButton onClick={openProfile} sx={{ marginLeft: 1 }}>
+                <Avatar src={loggedUser.photoUrl}/>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t("home.logout")}>
+              <IconButton onClick={logoutUser} sx={{ marginLeft: 1 }}>
+                <LogoutIcon />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
         </AppBar>
       </div>

@@ -27,7 +27,7 @@ const StyledTypography = styled(Typography)({
   width: "50%",
 });
 
-const PostCard = ({ title, created, city, price, currency, photo, id, categories = [], reportCount, categoriesList }) => {
+const PostCard = ({ title, created, city, price, currency, photoUrl, id, categories = [], reportCount, categoriesList }) => {
   const { i18n, t } = useTranslation("core");
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ const PostCard = ({ title, created, city, price, currency, photo, id, categories
 
   return (
     <StyledCard onClick={selectPost} sx={{ m: 2 }}>
-      <CardMedia component="img" height="140" image={no_photo} alt="post-photo" />
+      <CardMedia component="img" height="140" image={photoUrl || no_photo} alt="post-photo" />
       <StyledCardContent>
         <Typography gutterBottom variant="h5" component="div">
           {title}

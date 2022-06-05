@@ -17,7 +17,7 @@
             "desc":"descending",
             "title":"Title",
             "created":"Creation date",
-            "views":"Popularity",
+            "reportCount":"Reports",
             "price":"Price"
         },
         "none":"None",
@@ -30,7 +30,9 @@
         "minPrice":"Min price",
         "maxPrice":"Max price",
         "categories":"Categories",
-        "cities":"Cities"
+        "cities":"Cities",
+        "logout":"Logout",
+        "changeLanguage":"Change language"
     },
     "login":{
         "email":"email",

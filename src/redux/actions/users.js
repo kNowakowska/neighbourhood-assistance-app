@@ -44,6 +44,7 @@ export const updateUser =
   (dispatch) => {
     return waxios.put(EDIT_USER, `user/${data.id}/`, data, (responseData) => {
       dispatch(editUser(responseData));
+      dispatch(loginUser(responseData));
       successCallback(responseData);
     });
   };

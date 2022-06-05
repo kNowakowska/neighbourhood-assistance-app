@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import usePrevious from "../hooks/usePrevious";
+import { API_URL, API_KEY } from "../conf";
+import axios from "axios";
 
 import { styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -20,12 +22,18 @@ import Tooltip from "@mui/material/Tooltip";
 import Rating from "@mui/material/Rating";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 
 import withNavBar from "../hoc/WithNavBar";
 import Comment from "../components/Comment";
 import CommentInput from "../components/CommentInput";
 import theme from "../theme";
 import { updateUser, createComment, getUsers, deleteUser } from "../redux/actions/users";
+import no_photo from "../assets/no-photo.png";
+
+const Input = styled("input")({
+  display: "none",
+});
 
 const StyledContainer = styled(Grid)({
   marginTop: "100px",
@@ -48,12 +56,13 @@ const StyledAvatar = styled(Avatar)({
 });
 
 const StyledItalicAuthorData = styled(Typography)({
-  width: "75%",
+  width: "100%",
   fontStyle: "italic",
+  textAlign: "center",
 });
 
 const StyledRating = styled(Rating)({
-  width: "75%",
+  width: 120,
 });
 
 const StyledBox = styled(Box)({
@@ -258,6 +267,34 @@ const Profile = ({ users, getUsers, updateUser, createComment, loggedUser, delet
     });
   };
 
+  const uploadPhoto = (e) => {
+    console.log(e.target.files);
+    if (e.target.files?.length) {
+      const file = e.target.files[0];
+      console.log("file");
+      const formData = new FormData();
+      formData.append("image", file);
+
+      axios
+        .post(API_URL, formData, {
+          headers: {
+            Authorization: "Client-ID " + API_KEY,
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          updateUser({ ...user, photoUrl: response.data.data.link }, (responseData) => {
+            setUser(responseData);
+            setPhoto(responseData.photoUrl);
+          });
+        })
+        .catch((error) => {
+          setPhoto("");
+        });
+    }
+  };
+
   // Jesli różnica pomiedzy obecną datą a last seen jest mniejsza niż dzień pokazuje się liczba godzin od tej daty.
 
   return (
@@ -265,16 +302,50 @@ const Profile = ({ users, getUsers, updateUser, createComment, loggedUser, delet
       <CssBaseline />
       <StyledContainer container>
         <Grid item xs={3}>
-          <StyledAvatar alt={`${name} ${lastName} avatar`} src={photo} />
+          {loggedUser.id === user?.id ? (
+            <>
+              <label htmlFor="upload-photo-input">
+                <Input accept="image/jpeg,image/png" id="upload-photo-input" type="file" onChange={uploadPhoto} />
+                <IconButton
+                  onClick={uploadPhoto}
+                  component="span"
+                  sx={{
+                    width: 200,
+                    height: 200,
+                    "&:hover": { cursor: "pointer", opacity: "0.4" },
+                    "&:hover > .icon": { visibility: "visible" },
+                  }}
+                >
+                  <FileUploadIcon
+                    size="large"
+                    className="icon"
+                    sx={{ width: 50, height: 50, position: "absolute", left: 75, zIndex: 100, visibility: "hidden" }}
+                  />
+                  <StyledAvatar alt={`${name} ${lastName} avatar`} src={photo || no_photo} />
+                </IconButton>
+              </label>
+            </>
+          ) : (
+            <span>
+              <StyledAvatar
+                alt={`${name} ${lastName} avatar`}
+                src={photo || no_photo}
+                sx={{ marginLeft: "auto", marginRight: "auto" }}
+              />
+            </span>
+          )}
+
           <StyledItalicAuthorData variant="body2" align="center" sx={{ mt: 3 }}>
-            {t("profile.registered", { date: user?.created })}
+            {t("profile.registered", { date: user?.created ? new Date(user.created).toDateString() : "" })}
           </StyledItalicAuthorData>
           <StyledItalicAuthorData variant="body2" align="center" sx={{ mt: 3 }}>
             {t("profile.lastSeen", { date: user?.lastActive ? new Date(user.lastActive).toDateString() : "" })}
           </StyledItalicAuthorData>
-          <StyledRating name="read-only" value={user?.averageRate || 0} readOnly precision={0.5} sx={{ mt: 3, ml: 4 }} />
+          <Box sx={{ width: "100%", textAlign: "center" }}>
+            <StyledRating name="read-only" value={user?.averageRate || 0} readOnly precision={0.5} sx={{ mt: 3 }} />
+          </Box>
           {loggedUser.id === user?.id && (
-            <Button onClick={handleDeleteUser} variant="contained" color="primary" sx={{ mt: 3, ml: -6 }}>
+            <Button onClick={handleDeleteUser} variant="contained" color="primary" sx={{ mt: 3 }} align="center">
               {t("profile.deleteUser")}
             </Button>
           )}
@@ -356,10 +427,10 @@ const Profile = ({ users, getUsers, updateUser, createComment, loggedUser, delet
             minTime={7}
             maxTime={20}
             dateFormat={"ddd"}
-            onChange={handleChangeSchedule}
+            onChange={loggedUser.id === user?.id ? handleChangeSchedule : () => null}
             unselectedColor={theme.palette.background.paper}
             selectedColor={theme.palette.secondary.main}
-            hoveredColor={theme.palette.primary.main}
+            hoveredColor={loggedUser.id === user?.id ? theme.palette.secondary.main : theme.palette.background.paper}
           />
           <StyledDivider />
 

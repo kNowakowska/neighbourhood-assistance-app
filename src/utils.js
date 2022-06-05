@@ -76,11 +76,11 @@ export const postsSortOptions = [
   {
     id: 7,
     direction: "asc",
-    field: "views",
+    field: "reportCount",
   },
   {
     id: 8,
     direction: "desc",
-    field: "views",
+    field: "reportCount",
   },
 ];

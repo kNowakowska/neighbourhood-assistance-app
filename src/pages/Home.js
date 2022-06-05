@@ -36,7 +36,7 @@ const StyledTextField = styled(TextField)({
   width: 250,
 });
 
-function Home({ initialPosts, getPosts, getUsers }) {
+function Home({ initialPosts, getPosts, getUsers, loggedUser }) {
   const { t } = useTranslation("core");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
@@ -44,7 +44,6 @@ function Home({ initialPosts, getPosts, getUsers }) {
   const [posts, setPosts] = useState(initialPosts);
   const [myPostsMode, setMyPostsMode] = useState(false);
   const [filters, setFilters] = useState(null);
-  const userId = 1;
 
   let params = useParams();
 
@@ -67,9 +66,10 @@ function Home({ initialPosts, getPosts, getUsers }) {
 
   const showMyPosts = () => {
     let defaultPosts = [...initialPosts];
-    if (params?.category) defaultPosts = defaultPosts.filter((post) => post.categories.includes(+params.category));
+    if (params?.category)
+      defaultPosts = defaultPosts.filter((post) => post.categories.map((cat) => cat.id).includes(+params.category));
 
-    if (!myPostsMode) setPosts(defaultPosts.filter((post) => post.author.id === userId));
+    if (!myPostsMode) setPosts(defaultPosts.filter((post) => post.author.id === loggedUser.id));
     else setPosts(defaultPosts);
     setMyPostsMode((prevState) => !prevState);
     setSearch("");
@@ -80,10 +80,10 @@ function Home({ initialPosts, getPosts, getUsers }) {
   const setInitialPosts = (initPosts) => {
     let defaultPosts = [...initPosts];
 
-    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === userId);
+    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === loggedUser.id);
 
     if (params?.category) {
-      setPosts(defaultPosts.filter((post) => post.categories.includes(+params.category)));
+      setPosts(defaultPosts.filter((post) => post.categories.map((cat) => cat.id).includes(+params.category)));
     } else {
       setPosts(defaultPosts);
     }
@@ -100,15 +100,16 @@ function Home({ initialPosts, getPosts, getUsers }) {
 
   useEffect(() => {
     let defaultPosts = [...initialPosts];
-    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === userId);
-    if (params?.category) defaultPosts = defaultPosts.filter((post) => post.categories.includes(+params.category));
+    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === loggedUser.id);
+    if (params?.category)
+      defaultPosts = defaultPosts.filter((post) => post.categories.map((cat) => cat.id).includes(+params.category));
 
     setPosts(
       defaultPosts.filter(
         (post) =>
           post.title.toLowerCase().includes(search) ||
           post.city.toLowerCase().includes(search) ||
-          post.created.toDateString().toLowerCase().includes(search) ||
+          new Date(post.created).toDateString().toLowerCase().includes(search) ||
           post.price.toString().includes(search) ||
           post.currency.toLowerCase().includes(search)
       )
@@ -117,8 +118,9 @@ function Home({ initialPosts, getPosts, getUsers }) {
 
   useEffect(() => {
     let defaultPosts = [...initialPosts];
-    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === userId);
-    if (params?.category) defaultPosts = defaultPosts.filter((post) => post.categories.includes(+params.category));
+    if (myPostsMode) defaultPosts = defaultPosts.filter((post) => post.author.id === loggedUser.id);
+    if (params?.category)
+      defaultPosts = defaultPosts.filter((post) => post.categories.map((cat) => cat.id).includes(+params.category));
     if (filters) {
       if (filters.minPrice) {
         defaultPosts = defaultPosts.filter((post) => post.price >= filters.minPrice);
@@ -139,7 +141,9 @@ function Home({ initialPosts, getPosts, getUsers }) {
       }
 
       if (filters.categories.length) {
-        defaultPosts = defaultPosts.filter((post) => filters.categories.some((category) => post.categories.includes(category)));
+        defaultPosts = defaultPosts.filter((post) =>
+          filters.categories.some((category) => post.categories.map((cat) => cat.id).includes(category))
+        );
       }
     }
 
@@ -154,8 +158,8 @@ function Home({ initialPosts, getPosts, getUsers }) {
       case "price":
         defaultPosts = [...defaultPosts.sort(priceSort)];
         break;
-      case "views":
-        defaultPosts = [...defaultPosts.sort(viewsSort)];
+      case "reportCount":
+        defaultPosts = [...defaultPosts.sort(reportsSort)];
         break;
       default:
         defaultPosts = [...defaultPosts];
@@ -178,7 +182,7 @@ function Home({ initialPosts, getPosts, getUsers }) {
 
   const priceSort = (a, b) => a.price - b.price;
 
-  const viewsSort = (a, b) => a.views - b.views;
+  const reportsSort = (a, b) => a.reportCount - b.reportCount;
 
   const openFiltersModal = () => {
     isFiltersModalOpen(true);
@@ -203,8 +207,8 @@ function Home({ initialPosts, getPosts, getUsers }) {
         case "price":
           defaultPosts = [...defaultPosts.sort(priceSort)];
           break;
-        case "views":
-          defaultPosts = [...defaultPosts.sort(viewsSort)];
+        case "reportCount":
+          defaultPosts = [...defaultPosts.sort(reportsSort)];
           break;
         default:
           defaultPosts = [...defaultPosts];
@@ -234,7 +238,9 @@ function Home({ initialPosts, getPosts, getUsers }) {
     }
 
     if (selectedCategories.length) {
-      defaultPosts = defaultPosts.filter((post) => selectedCategories.some((category) => post.categories.includes(category)));
+      defaultPosts = defaultPosts.filter((post) =>
+        selectedCategories.some((category) => post.categories.map((cat) => cat.id).includes(category))
+      );
     }
 
     setMyPostsMode(false);
@@ -323,6 +329,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state) => ({
   initialPosts: state.posts,
+  loggedUser: state.system,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withNavBar(Home));

@@ -134,7 +134,7 @@ const Post = ({ posts, deletePost, loggedUser, getPosts, users, getUsers, report
               <StyledPostTitle variant="h3" sx={{ m: 2 }}>
                 {post?.title || ""}
               </StyledPostTitle>
-              <StyledPhotoBox component="img" alt="photo" src={no_photo} sx={{ m: 2 }} />
+              <StyledPhotoBox component="img" alt="photo" src={post?.photoUrl || no_photo} sx={{ m: 2 }} />
               <Typography variant="body1" sx={{ m: 4 }}>
                 {post?.description || ""}
               </Typography>

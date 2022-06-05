@@ -3,6 +3,7 @@ import { useConfirm } from "material-ui-confirm";
 import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import { styled } from "@mui/material/styles";
 import Container from "@mui/material/Container";
@@ -27,6 +28,7 @@ import withNavBar from "../hoc/WithNavBar";
 import { currencies } from "../utils";
 import { createPost } from "../redux/actions/posts";
 import { getCategories } from "../redux/actions/categories";
+import { API_URL, API_KEY } from "../conf";
 
 const StyledContainer = styled(Grid)({
   marginTop: "100px",
@@ -42,6 +44,7 @@ const NewPost = ({ categories, createPost, loggedUser, getCategories }) => {
   const [price, setPrice] = useState(0);
   const [currency, setCurrency] = useState(currencies[0]);
   const [photo, setPhoto] = useState(null);
+  const [photoUrl, setPhotoUrl] = useState("");
   const [category, setCategory] = useState([]);
 
   useEffect(() => {
@@ -85,7 +88,7 @@ const NewPost = ({ categories, createPost, loggedUser, getCategories }) => {
         description,
         price: +price,
         currency: currency.curr,
-        photoUrl: "",
+        photoUrl: photoUrl,
         city: loggedUser.city,
         authorId: loggedUser.id,
         categories: category.map((selected) => categories.find((item) => item.id === selected)?.id),
@@ -99,8 +102,28 @@ const NewPost = ({ categories, createPost, loggedUser, getCategories }) => {
 
   const uploadPhoto = (e) => {
     if (e.target.files?.length) {
-      const file = e.target.files[0];
-      setPhoto(file);
+      if (e.target.files.length) {
+        const file = e.target.files[0];
+        setPhoto(file);
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        axios
+          .post(API_URL, formData, {
+            headers: {
+              Authorization: "Client-ID " + API_KEY,
+              Accept: "application/json",
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response) => {
+            setPhotoUrl(response.data.data.link);
+          })
+          .catch((error) => {
+            setPhoto(null);
+          });
+      }
     }
   };
 
@@ -110,6 +133,7 @@ const NewPost = ({ categories, createPost, loggedUser, getCategories }) => {
     setPrice(0);
     setCurrency(currencies[0]);
     setPhoto(null);
+    setPhotoUrl("");
   };
 
   const fieldsNotEmpty = () => title && description && price > 0 && category.length;

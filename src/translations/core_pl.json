@@ -17,7 +17,7 @@
             "desc":"malejąco",
             "title":"Tytule",
             "created":"Dacie utworzenia",
-            "views":"Popularności",
+            "reportCount":"Zgłoszeniach",
             "price":"Cenie"
         },
         "none":"Brak",
@@ -30,7 +30,9 @@
         "minPrice":"Minimalna cena",
         "maxPrice":"Maksymalna cena",
         "categories":"Kategorie",
-        "cities":"Miasta"
+        "cities":"Miasta",
+        "logout":"Wyloguj",
+        "changeLanguage":"Zmień język"
     },
     "login":{
         "email":"email",
