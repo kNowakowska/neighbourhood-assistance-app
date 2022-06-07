@@ -67,6 +67,7 @@ const Post = ({ posts, deletePost, loggedUser, getPosts, users, getUsers, report
 
   const [post, setPost] = useState(null);
   const [author, setAuthor] = useState(null);
+  const [avgRate, setAvgRate] = useState(0);
 
   useEffect(() => {
     if (!posts.length) {
@@ -80,7 +81,8 @@ const Post = ({ posts, deletePost, loggedUser, getPosts, users, getUsers, report
   useEffect(() => {
     const post = posts.find((post) => post.id === +params.id);
     setPost({ ...post });
-    setAuthor(users.find((user) => user.id === post.author.id));
+    setAuthor({ ...users.find((user) => user.id === post.author.id) });
+    setAvgRate(users.find((user) => user.id === post.author.id)?.averageRate || 0);
   }, [params]);
 
   const handleReportPost = () => {
@@ -96,7 +98,9 @@ const Post = ({ posts, deletePost, loggedUser, getPosts, users, getUsers, report
       confirmationText: t("post.delete"),
       cancellationText: t("post.cancel"),
     }).then(() => {
-      deletePost(post.id);
+      deletePost(post.id, () => {
+        navigate("/home");
+      });
     });
   };
 
@@ -109,7 +113,11 @@ const Post = ({ posts, deletePost, loggedUser, getPosts, users, getUsers, report
       <CssBaseline />
       <StyledContainer container>
         <Grid item xs={3} container flexDirection="column" justifyContent="center">
-          <StyledAvatar alt={`${author?.name} ${author?.lastName} avatar`} src={author?.photo} onClick={showProfile} />
+          <StyledAvatar
+            alt={`${author?.name} ${author?.lastName} avatar`}
+            src={author?.photoUrl || no_photo}
+            onClick={showProfile}
+          />
           <StyledAuthorData
             variant="h5"
             align="center"
@@ -122,7 +130,9 @@ const Post = ({ posts, deletePost, loggedUser, getPosts, users, getUsers, report
           <StyledItalicAuthorData variant="body2" align="center" sx={{ mt: 3 }}>
             {t("profile.lastSeen", { date: author ? new Date(author?.lastActive).toDateString() : "" })}
           </StyledItalicAuthorData>
-          <StyledRating name="read-only" value={author?.averageRate} readOnly precision={0.5} sx={{ mt: 3, ml: 4 }} />
+          <Box sx={{ width: "100%", textAlign: "center" }}>
+            <StyledRating name="read-only" value={avgRate} readOnly precision={0.5} sx={{ mt: 3 }} />
+          </Box>
         </Grid>
         <Grid item container xs={9}>
           <Paper>

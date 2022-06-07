@@ -134,6 +134,7 @@ const NewPost = ({ categories, createPost, loggedUser, getCategories }) => {
     setCurrency(currencies[0]);
     setPhoto(null);
     setPhotoUrl("");
+    setCategory([]);
   };
 
   const fieldsNotEmpty = () => title && description && price > 0 && category.length;

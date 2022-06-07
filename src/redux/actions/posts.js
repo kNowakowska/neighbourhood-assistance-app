@@ -37,9 +37,10 @@ export const updatePost = (data) => (dispatch) => {
   });
 };
 
-export const deletePost = (dataId) => (dispatch) => {
+export const deletePost = (dataId, successCallback = () => null) => (dispatch) => {
   return waxios.delete(DELETE_POST, `post/${dataId}/`, (responseData) => {
     dispatch(removePost(responseData));
+    successCallback();
   });
 };
 

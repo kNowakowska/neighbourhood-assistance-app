@@ -235,6 +235,7 @@ const Profile = ({ users, getUsers, updateUser, createComment, loggedUser, delet
 
   const saveComment = (comment) => {
     createComment({ ...comment, authorId: loggedUser.id }, user.id, (responseData) => {
+      setUser({ ...responseData });
       setComments(responseData.comments);
     });
     setAddCommentMode((addCommentMode) => !addCommentMode);
